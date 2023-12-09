@@ -28,7 +28,7 @@ function NewBlockEditor({ onConfirm }: IProps) {
                 if (!meaning) {
                     return true;
                 }
-                dictionary[word] = meaning;
+                dictionary[word.trim()] = meaning.trim();
             });
 
         if (isError) {

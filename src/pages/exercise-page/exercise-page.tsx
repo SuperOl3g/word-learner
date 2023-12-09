@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import s from './exercise-page.module.css';
+import {pluralize} from "../../utils";
 
 interface IProps {
     words: { [key: string]: string },
@@ -45,8 +46,8 @@ function ExercisePage({ words, onBackButtonClick }: IProps) {
             `${Math.round(correctCounter / counter * 10000) / 100}% (${correctCounter} / ${counter})`
         }
         </div>
-        <div>How to translate the next word:</div>
-        <span><b>{currentWord}</b>?</span>
+        <div>How to translate the next {pluralize(currentWord.split(' ').length, ['word', 'words'])}:</div>
+        <span><b>{currentWord}</b> ?</span>
         <br/>
         {isInCheckState ?
             <div className={s.checkBlock}>
