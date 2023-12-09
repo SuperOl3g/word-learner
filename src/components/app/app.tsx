@@ -48,6 +48,10 @@ function App() {
     }
 
     const handleCrossClick = (key: string) => (e: React.MouseEvent) => {
+        if (!confirm('Do you really want to remove this item?')) { // eslint-disable-line
+            return;
+        }
+
         const newDictionaries = { ...dictionaries };
         delete newDictionaries[key];
 
