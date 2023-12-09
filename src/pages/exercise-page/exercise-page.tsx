@@ -5,6 +5,7 @@ import {pluralize} from "../../utils";
 interface IProps {
     words: { [key: string]: string },
     onBackButtonClick: () => void,
+    onAnswer: (isPositive: boolean) => void,
 }
 
 const REVERSE_EX_PROBABILITY = 0.2;
@@ -14,7 +15,7 @@ const getRandomWord = (words: IProps['words']): [string, boolean] => {
     return [keys[Math.round(Math.random() * keys.length)], Math.random() < REVERSE_EX_PROBABILITY];
 }
 
-function ExercisePage({ words, onBackButtonClick }: IProps) {
+function ExercisePage({ words, onBackButtonClick, onAnswer }: IProps) {
     const [counter, setCounter] = useState(0);
     const [correctCounter, setCorrectCounter] = useState(0);
     const [[currentWord,isReversedEx], setNewWord] = useState(getRandomWord(words));
@@ -31,7 +32,9 @@ function ExercisePage({ words, onBackButtonClick }: IProps) {
         }
         setNewWord(getRandomWord(words));
         setCheckStateFlag(false);
-    }, [counter, words]);
+
+        onAnswer(isCorrect);
+    }, [counter, words, onAnswer, correctCounter]);
 
     const word = isReversedEx ? words[currentWord] : currentWord;
     const definition = isReversedEx ? currentWord : words[currentWord];

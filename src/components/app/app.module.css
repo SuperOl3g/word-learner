@@ -3,4 +3,7 @@
   min-height: 100vh;
   background-color: #282c34;
   color: white;
+  position: relative;
+  display: flex;
+  align-items: stretch;
 }

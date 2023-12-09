@@ -59,7 +59,7 @@ function DictionaryPage({
         .reduce((sum, k) => sum + Object.keys(dictionaries[k]).length, 0);
 
     return (
-        <div>
+        <div className={s.page}>
             <div className={s.learnBlock}>
                 {isInSelectState ? <div>
                     Selected lists: {Object.keys(selectedKeys).length} / {Object.keys(dictionaries).length}
