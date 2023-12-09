@@ -10,23 +10,41 @@ interface IState {
     },
 }
 
-const initState: IState = {
-    dictionaries: {},
-}
+const LS_DICT_KEY = '__wordList';
+
+// TODO: add correcy handling of possible parse errors
+const LS = {
+    get: <T = any>(key: string) => {
+        const v= localStorage.getItem(key);
+
+        return v  ? (JSON.parse(v) as T) : undefined;
+    },
+    set: (key: string, val: any) => {
+        const v = JSON.stringify(val);
+
+        localStorage.setItem(key, v);
+    },
+};
 
 function App() {
     const [{ dictionaries }, setState] =
-        useState<IState>(initState);
+        useState<IState>({
+            dictionaries: LS.get(LS_DICT_KEY) || {},
+        });
 
     const handleAddConfirm = (dict: IDictionary) => {
         const newBlock = Object.keys(dict)?.length ? { [new Date().valueOf()]: dict } : {};
 
+        const dicts = {
+            ...dictionaries,
+            ...newBlock,
+        };
+
         setState({
-            dictionaries: {
-                ...dictionaries,
-                ...newBlock,
-            },
-        })
+            dictionaries: dicts,
+        });
+
+        LS.set(LS_DICT_KEY, dicts);
     }
 
     const handleCrossClick = (key: string) => (e: React.MouseEvent) => {
