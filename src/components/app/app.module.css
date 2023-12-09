@@ -1,0 +1,38 @@
+.app {
+  padding: 20px;
+  text-align: center;
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 14pt;
+  color: white;
+}
+
+.block {
+  position: relative;
+  text-align: left;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  padding: 8px 12px;
+  margin: 6px;
+}
+
+.crossButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  border-radius: 50%;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.blockTitle {
+  opacity: .64;
+  font-size: 80%;
+  padding-bottom: 8px;
+}

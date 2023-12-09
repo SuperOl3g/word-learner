@@ -1,0 +1,7 @@
+.textarea {
+    display: block;
+}
+
+.textarea_error {
+    border-color: red;
+}
