@@ -3,6 +3,7 @@ import s from './exercise-page.module.css';
 
 interface IProps {
     words: { [key: string]: string },
+    onBackButtonClick: () => void,
 }
 
 const getRandomWord = (words: IProps['words']) => {
@@ -10,7 +11,7 @@ const getRandomWord = (words: IProps['words']) => {
     return keys[Math.round(Math.random() * keys.length)];
 }
 
-function ExercisePage({ words }: IProps) {
+function ExercisePage({ words, onBackButtonClick }: IProps) {
     const [counter, setCounter] = useState(0);
     const [correctCounter, setCorrectCounter] = useState(0);
     const [currentWord, setNewWord] = useState(getRandomWord(words));
@@ -30,6 +31,13 @@ function ExercisePage({ words }: IProps) {
     }, [counter, words]);
 
     return <div className={s.container}>
+        <button
+            className={s.backButton}
+            onClick={onBackButtonClick}
+        >
+            ⬅︎
+        </button>
+
         <div className={s.counter}>
             Words in pull: {Object.keys(words).length}
             <br/>

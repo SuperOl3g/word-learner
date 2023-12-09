@@ -37,6 +37,13 @@ function App() {
         LS.set(LS_DICT_KEY, dicts);
     }, [dictionaries]);
 
+    const handleBackBtnClick = useCallback(() => {
+        setState({
+            dictionaries,
+            currentDictionariesKeys: []
+        });
+    }, [dictionaries]);
+
     const handleCrossClick = useCallback((key: string)  => {
         if (!confirm('Do you really want to remove this item?')) { // eslint-disable-line
             return;
@@ -84,6 +91,7 @@ function App() {
         page = (
             <ExercisePage
                 words={words}
+                onBackButtonClick={handleBackBtnClick}
              />
         );
     }

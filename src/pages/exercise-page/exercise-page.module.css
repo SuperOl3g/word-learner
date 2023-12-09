@@ -7,6 +7,12 @@
     position: relative;
 }
 
+.backButton {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .counter {
     position: absolute;
     top: 0;
