@@ -1,4 +1,4 @@
-import React, {ChangeEvent, Fragment, useState} from 'react';
+import React, {ChangeEvent, Fragment, useCallback, useState} from 'react';
 import s from './dictionary-page.module.css';
 import NewBlockEditor from "../../components/new-block-editor/new-block-editor";
 import {formatDate} from "../../utils";
@@ -10,62 +10,54 @@ interface IProps {
         }
     },
 
-    onDictionaryAdd: (dict: {
-        [key: string]: string
-    }) => void,
-
+    onDictionaryAdd: (dict: { [key: string]: string }) => void,
     onDictionaryRemove: (key: string) => void,
+    onDictionariesSelected: (dictKeys: Array<string>) => void,
 }
 
 const MAX_WORD_COUNT = 10;
-
-interface IState {
-    isInSelectState: boolean,
-    selectedKeys: {[key: string]: boolean},
-}
 
 function DictionaryPage({
     dictionaries,
     onDictionaryAdd,
     onDictionaryRemove,
+    onDictionariesSelected,
 }: IProps) {
-    const [{isInSelectState, selectedKeys }, setState] = useState<IState>({
-        isInSelectState: false,
-        selectedKeys: {},
-    });
+    const [isInSelectState, setSelectState] = useState(false);
+    const [selectedKeys, setSelectedKeys] =
+        useState<{[key: string]: boolean}>({});
 
-    const handleBlockSelectionToggle = (e: ChangeEvent<{ name: string }>) => {
+    const handleBlockSelectionToggle = useCallback((e: ChangeEvent<{ name: string }>) => {
         const key = e.target.name;
         const newSelectedKeys = { ...selectedKeys };
 
         newSelectedKeys[key] = !newSelectedKeys[key];
 
-        setState({
-           isInSelectState,
-           selectedKeys: newSelectedKeys,
-        });
-    };
+        setSelectedKeys(newSelectedKeys);
+    }, [selectedKeys]);
 
-    const handleLearnBtnClick = () => {
+    const handleLearnBtnClick = useCallback(() => {
         const selectedKeys: {[key: string]: boolean} = {};
 
         Object.keys(dictionaries).forEach(key => {
             selectedKeys[key] = true;
         });
 
-        setState({
-            isInSelectState: true,
-            selectedKeys,
-        });
-    }
+        setSelectState(true);
+        setSelectedKeys(selectedKeys);
+    },[dictionaries]);
+
+    const handleStartExerciseBtnClick = useCallback(() => {
+        onDictionariesSelected(Object.keys(selectedKeys));
+    }, [onDictionariesSelected, selectedKeys]);
 
     return (
         <div>
             <div className={s.learnBlock}>
                 {isInSelectState ? <Fragment>
-                    {Object.keys(selectedKeys).filter(k => selectedKeys[k]).length} / {Object.keys(dictionaries).length}
+                    selected lists: {Object.keys(selectedKeys).filter(k => selectedKeys[k]).length} / {Object.keys(dictionaries).length}
                     &nbsp;&nbsp;
-                    <button onClick={() => {}}>
+                    <button onClick={handleStartExerciseBtnClick}>
                         Let's roll!
                     </button>
                 </Fragment> :
@@ -74,6 +66,7 @@ function DictionaryPage({
                     onClick={handleLearnBtnClick}
                 >Learn!</button>}
             </div>
+
             <div className={s.blocksContainer}>
                 {Object.keys(dictionaries).map(key => {
                     const keys = Object.keys(dictionaries[key]);

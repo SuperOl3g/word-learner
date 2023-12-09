@@ -1,4 +1,4 @@
-import React, {ChangeEvent, Fragment, useState} from 'react';
+import React, {ChangeEvent, Fragment, useCallback, useState} from 'react';
 import classNames from 'classnames';
 import s from './new-block-edtior.module.css';
 import {IDictionary} from "../../types";
@@ -7,29 +7,19 @@ interface IProps {
     onConfirm?: (dict: IDictionary) => void
 }
 
-interface IState {
-    value: string,
-    isInAddingState: boolean,
-    isError: boolean,
-}
-
-const initialState: IState = {value: '', isInAddingState: false, isError: false };
-
 function NewBlockEditor({ onConfirm }: IProps) {
-    const [state, setState] =
-        useState<IState>(initialState);
+    const [value, setValue] = useState('');
+    const [isInAddingState, setAddingState] = useState(false);
+    const [isError, setErrorState] = useState(false);
 
-    const handleChange = (e: ChangeEvent<{ value: string, name: string }>) => {
-        setState({
-            ...state,
-            value: e.target.value,
-        });
-    }
+    const handleChange = useCallback((e: ChangeEvent<{ value: string, name: string }>) => {
+        setValue(e.target.value);
+    }, []);
 
-    const handleConfirmClick = () => {
+    const handleConfirmClick = useCallback(() => {
         const dictionary: IDictionary = {};
 
-        const isError = state.value
+        const isError = value
             .split('\n')
             .find(val => {
                 const [word, meaning] = val.split('-');
@@ -42,25 +32,21 @@ function NewBlockEditor({ onConfirm }: IProps) {
             });
 
         if (isError) {
-            setState({
-                ...state,
-                isError: true,
-            });
+            setErrorState(true);
         } else {
             onConfirm?.(dictionary);
 
-            setState(initialState);
+            setAddingState(false);
+            setValue('');
+            setErrorState(false);
         }
-    }
+    }, [onConfirm]);
 
-    const handleAddClick = () => {
-        setState({
-            ...state,
-            isInAddingState: true
-        });
-    }
+    const handleAddClick = useCallback(() => {
+        setAddingState( true);
+    }, []);
 
-    return !state.isInAddingState ?
+    return !isInAddingState ?
         <button
             className={s.button}
             onClick={handleAddClick}
@@ -71,9 +57,9 @@ function NewBlockEditor({ onConfirm }: IProps) {
                 autoFocus
                 className={classNames({
                     [s.textarea]: true,
-                    [s.textarea_error]: state.isError,
+                    [s.textarea_error]: isError,
                 })}
-                value={state.value}
+                value={value}
                 onChange={handleChange}
             />
             <button
