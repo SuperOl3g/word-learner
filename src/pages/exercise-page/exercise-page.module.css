@@ -1,7 +1,27 @@
 .container {
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
 }
 
 .counter {
+    position: absolute;
+    top: 0;
+    text-align: right;
+    right: 0;
+}
 
+.checkBlock {
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkTitle {
+    margin-bottom: 8px;
 }
