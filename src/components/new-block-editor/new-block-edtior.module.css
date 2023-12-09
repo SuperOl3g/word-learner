@@ -1,7 +1,17 @@
 .textarea {
     display: block;
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 100px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
 }
 
 .textarea_error {
     border-color: red;
+}
+
+.button {
+    align-self: center;
+    justify-self: center;
 }

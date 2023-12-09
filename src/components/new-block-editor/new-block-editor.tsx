@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, Fragment, useState} from 'react';
 import classNames from 'classnames';
 import s from './new-block-edtior.module.css';
 import {IDictionary} from "../../types";
@@ -61,8 +61,12 @@ function NewBlockEditor({ onConfirm }: IProps) {
     }
 
     return !state.isInAddingState ?
-        <button onClick={handleAddClick}>+ Add</button> :
-        <div>
+        <button
+            className={s.button}
+            onClick={handleAddClick}
+        >+ Add
+        </button> :
+        <Fragment>
             <textarea
                 autoFocus
                 className={classNames({
@@ -72,8 +76,13 @@ function NewBlockEditor({ onConfirm }: IProps) {
                 value={state.value}
                 onChange={handleChange}
             />
-            <button onClick={handleConfirmClick}>Confirm</button>
-        </div>
+            <button
+                className={s.button}
+                onClick={handleConfirmClick}
+            >
+                Confirm
+            </button>
+        </Fragment>
     ;
 }
 
