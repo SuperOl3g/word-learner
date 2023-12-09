@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import s from './exercise-page.module.css';
 
 interface IProps {

@@ -40,7 +40,7 @@ function NewBlockEditor({ onConfirm }: IProps) {
             setValue('');
             setErrorState(false);
         }
-    }, [onConfirm]);
+    }, [onConfirm, value]);
 
     const handleAddClick = useCallback(() => {
         setAddingState( true);

@@ -18,3 +18,6 @@ export const LS = {
         localStorage.removeItem(key);
     }
 };
+
+export const pluralize = (count: number, forms: [string, string]) =>
+    count !== 1 ? forms[1] : forms[0];

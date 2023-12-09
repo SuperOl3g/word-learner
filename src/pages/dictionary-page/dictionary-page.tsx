@@ -1,7 +1,7 @@
 import React, {ChangeEvent, Fragment, useCallback, useState} from 'react';
 import s from './dictionary-page.module.css';
 import NewBlockEditor from "../../components/new-block-editor/new-block-editor";
-import {formatDate} from "../../utils";
+import {formatDate, pluralize} from "../../utils";
 
 interface IProps {
     dictionaries: {
@@ -31,7 +31,11 @@ function DictionaryPage({
         const key = e.target.name;
         const newSelectedKeys = { ...selectedKeys };
 
-        newSelectedKeys[key] = !newSelectedKeys[key];
+        if (newSelectedKeys[key]) {
+            delete newSelectedKeys[key];
+        } else {
+            newSelectedKeys[key] = true;
+        }
 
         setSelectedKeys(newSelectedKeys);
     }, [selectedKeys]);
@@ -51,16 +55,21 @@ function DictionaryPage({
         onDictionariesSelected(Object.keys(selectedKeys));
     }, [onDictionariesSelected, selectedKeys]);
 
+    const wordsCount = Object.keys(selectedKeys)
+        .reduce((sum, k) => sum + Object.keys(dictionaries[k]).length, 0);
+
     return (
         <div>
             <div className={s.learnBlock}>
-                {isInSelectState ? <Fragment>
-                    selected lists: {Object.keys(selectedKeys).filter(k => selectedKeys[k]).length} / {Object.keys(dictionaries).length}
+                {isInSelectState ? <div>
+                    Selected lists: {Object.keys(selectedKeys).length} / {Object.keys(dictionaries).length}
+                    &nbsp;
+                    ({wordsCount} {pluralize(wordsCount, ['word', 'words'])})
                     &nbsp;&nbsp;
                     <button onClick={handleStartExerciseBtnClick}>
                         Let's roll!
                     </button>
-                </Fragment> :
+                </div> :
                 <button
                     className={s.learnButton}
                     onClick={handleLearnBtnClick}
