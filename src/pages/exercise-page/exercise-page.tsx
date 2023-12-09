@@ -7,15 +7,17 @@ interface IProps {
     onBackButtonClick: () => void,
 }
 
-const getRandomWord = (words: IProps['words']) => {
+const REVERSE_EX_PROBABILITY = 0.2;
+
+const getRandomWord = (words: IProps['words']): [string, boolean] => {
     const keys = Object.keys(words);
-    return keys[Math.round(Math.random() * keys.length)];
+    return [keys[Math.round(Math.random() * keys.length)], Math.random() < REVERSE_EX_PROBABILITY];
 }
 
 function ExercisePage({ words, onBackButtonClick }: IProps) {
     const [counter, setCounter] = useState(0);
     const [correctCounter, setCorrectCounter] = useState(0);
-    const [currentWord, setNewWord] = useState(getRandomWord(words));
+    const [[currentWord,isReversedEx], setNewWord] = useState(getRandomWord(words));
     const [isInCheckState, setCheckStateFlag] = useState(false);
 
     const handleCheckBtnClick = useCallback(() => {
@@ -30,6 +32,9 @@ function ExercisePage({ words, onBackButtonClick }: IProps) {
         setNewWord(getRandomWord(words));
         setCheckStateFlag(false);
     }, [counter, words]);
+
+    const word = isReversedEx ? words[currentWord] : currentWord;
+    const definition = isReversedEx ? currentWord : words[currentWord];
 
     return <div className={s.container}>
         <button
@@ -46,13 +51,13 @@ function ExercisePage({ words, onBackButtonClick }: IProps) {
             `${Math.round(correctCounter / counter * 10000) / 100}% (${correctCounter} / ${counter})`
         }
         </div>
-        <div>How to translate the next {pluralize(currentWord.split(' ').length, ['word', 'words'])}:</div>
-        <span><b>{currentWord}</b> ?</span>
+        <div>How to translate the next {pluralize(word.split(' ').length, ['word', 'words'])}:</div>
+        <span><b>{word}</b> ?</span>
         <br/>
         {isInCheckState ?
             <div className={s.checkBlock}>
                 <div>This means:</div>
-                <div><b>{words[currentWord]}</b></div>
+                <div><b>{definition}</b></div>
                 <br/>
                 <div className={s.checkTitle}>You were right?</div>
                 <div>
