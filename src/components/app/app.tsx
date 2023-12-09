@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import s from './app.module.css';
-import NewBlockEditor from "../new-block-editor/new-block-editor";
-import {formatDate} from "../../utils";
+import {LS} from "../../utils";
 import {IDictionary} from "../../types";
+import DictionaryPage from "../../pages/dictionary-page/dictionary-page";
 
 interface IState {
     dictionaries: {
@@ -11,20 +11,6 @@ interface IState {
 }
 
 const LS_DICT_KEY = '__wordList';
-
-// TODO: add correcy handling of possible parse errors
-const LS = {
-    get: <T = any>(key: string) => {
-        const v= localStorage.getItem(key);
-
-        return v  ? (JSON.parse(v) as T) : undefined;
-    },
-    set: (key: string, val: any) => {
-        const v = JSON.stringify(val);
-
-        localStorage.setItem(key, v);
-    },
-};
 
 function App() {
     const [{ dictionaries }, setState] =
@@ -47,7 +33,7 @@ function App() {
         LS.set(LS_DICT_KEY, dicts);
     }
 
-    const handleCrossClick = (key: string) => (e: React.MouseEvent) => {
+    const handleCrossClick = (key: string) => () => {
         if (!confirm('Do you really want to remove this item?')) { // eslint-disable-line
             return;
         }
@@ -60,28 +46,13 @@ function App() {
         })
     }
 
-    const MAX_WORD_COUNT = 10;
-
   return (
       <div className={s.app}>
-          {Object.keys(dictionaries).map(key =>
-              <div className={s.block}>
-                  <div className={s.blockTitle}>{formatDate(new Date(+key))}</div>
-                  <div>
-                      <button
-                          className={s.crossButton}
-                          onClick={handleCrossClick(key)}
-                      >x</button>
-
-                      {Object.keys(dictionaries[key]).slice(0, MAX_WORD_COUNT)
-                          .map(word => <div><b>{word}</b> - {dictionaries[key][word]}</div>)}
-                      {Object.keys(dictionaries[key]).length > MAX_WORD_COUNT ? <div>...</div> : ''}
-                  </div>
-              </div>
-          )}
-          <div className={s.block}>
-            <NewBlockEditor onConfirm={handleAddConfirm} />
-          </div>
+          <DictionaryPage
+              dictionaries={dictionaries}
+              onDictionaryRemove={handleCrossClick}
+              onDictionaryAdd={handleAddConfirm}
+          />
       </div>
 
   );

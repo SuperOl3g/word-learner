@@ -1,0 +1,53 @@
+.learnBlock {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.blocksContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  font-size: 13pt;
+}
+
+.block {
+  position: relative;
+  text-align: left;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  padding: 16px;
+  margin: 12px;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.crossButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  border-radius: 50%;
+  padding: 0;
+  border: none;
+  width: 20px;
+  height: 20px;
+}
+
+.blockTitle {
+  opacity: .64;
+  font-size: 80%;
+  padding-bottom: 8px;
+}

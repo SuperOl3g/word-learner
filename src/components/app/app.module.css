@@ -1,42 +1,6 @@
 .app {
   padding: 20px;
-  text-align: center;
-  background-color: #282c34;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  background-color: #282c34;
   color: white;
-  font-size: 13pt;
-}
-
-.block {
-  position: relative;
-  text-align: left;
-  border: 1px solid currentColor;
-  border-radius: 3px;
-  padding: 8px 12px;
-  margin: 6px;
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-}
-
-.crossButton {
-  position: absolute;
-  top: 0;
-  right: 0;
-  transform: translate(50%, -50%);
-  border-radius: 50%;
-  padding: 0;
-  border: none;
-  width: 20px;
-  height: 20px;
-}
-
-.blockTitle {
-  opacity: .64;
-  font-size: 80%;
-  padding-bottom: 8px;
 }
