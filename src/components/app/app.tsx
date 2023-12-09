@@ -49,6 +49,8 @@ function App() {
             dictionaries: newDictionaries,
             currentDictionariesKeys: [],
         })
+
+        LS.set(LS_DICT_KEY, newDictionaries);
     }, [dictionaries]);
 
     const handleStartExercise = useCallback((dictKeys: Array<string>) => {

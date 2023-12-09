@@ -14,4 +14,7 @@ export const LS = {
 
         localStorage.setItem(key, v);
     },
+    remove: (key: string) => {
+        localStorage.removeItem(key);
+    }
 };
