@@ -91,7 +91,9 @@ function DictionaryPage({
                                 </button>
 
                                 {keys.slice(0, MAX_WORD_COUNT)
-                                    .map(word => <div><b>{word}</b> - {dictionaries[key][word]}</div>)}
+                                    .map(word => <div className={s.row}>
+                                        <b>{word}</b> - {dictionaries[key][word]}
+                                    </div>)}
                                 {keys.length > MAX_WORD_COUNT ?
                                     <div><br/>... and {keys.length - MAX_WORD_COUNT} more</div>
                                     : ''}

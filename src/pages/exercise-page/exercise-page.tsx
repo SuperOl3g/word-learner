@@ -41,7 +41,7 @@ function ExercisePage({ words, onBackButtonClick }: IProps) {
         <div className={s.counter}>
             Words in pull: {Object.keys(words).length}
             <br/>
-            Correctness: {counter === 0 ? '-' :
+            Session correctness: {counter === 0 ? '-' :
             `${Math.round(correctCounter / counter * 10000) / 100}% (${correctCounter} / ${counter})`
         }
         </div>
