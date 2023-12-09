@@ -34,12 +34,17 @@
   transform: translate(-50%, -50%);
 }
 
+.block:hover .crossButton {
+  display: block;
+}
+
 .crossButton {
+  display: none;
   position: absolute;
   top: 0;
   right: 0;
   transform: translate(50%, -50%);
-  border-radius: 50%;
+  border-radius: 4px;
   padding: 0;
   border: none;
   width: 20px;
