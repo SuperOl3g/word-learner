@@ -31,3 +31,8 @@
 .checkTitle {
     margin-bottom: 8px;
 }
+
+.inputError {
+    margin-top: 2px;
+    height: 14pt;
+}
