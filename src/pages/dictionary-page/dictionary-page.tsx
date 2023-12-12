@@ -4,6 +4,7 @@ import NewWordListEditor from "../../components/new-word-list-editor/new-word-li
 import {formatDate, pluralize} from "../../utils";
 import {IDictionary, ValueOf} from "../../types";
 import {KNOWING_CORRECT_REPEATS_THRESHOLD} from "../exercise-page/useWordsPull";
+import Checkbox from "../../components/checkbox/checkbox";
 
 interface IProps {
     wordLists: {
@@ -26,76 +27,86 @@ function DictionaryPage({
     onListSelected,
 }: IProps) {
     const [isInSelectState, setSelectState] = useState(false);
-    const [selectedKeys, setSelectedKeys] =
-        useState<{[key: string]: boolean}>({});
+    const [selectedList, setSelectedList] =
+        useState<Array<string>>([]);
 
     const handleBlockSelectionToggle = useCallback((e: ChangeEvent<{ name: string }>) => {
         const key = e.target.name;
-        const newSelectedKeys = { ...selectedKeys };
+        const i =  selectedList.indexOf(key);
+        const newSelectedKeys = [...selectedList];
 
-        if (newSelectedKeys[key]) {
-            delete newSelectedKeys[key];
+        if (i  === -1) {
+            newSelectedKeys.push(key);
         } else {
-            newSelectedKeys[key] = true;
+            newSelectedKeys.splice(i,1);
         }
 
-        setSelectedKeys(newSelectedKeys);
-    }, [selectedKeys]);
+        setSelectedList(newSelectedKeys);
+    }, [selectedList]);
 
     const handleLearnBtnClick = useCallback(() => {
-        const selectedKeys: {[key: string]: boolean} = {};
-
-        Object.keys(wordLists).forEach(key => {
-            selectedKeys[key] = true;
-        });
-
         setSelectState(true);
-        setSelectedKeys(selectedKeys);
+        setSelectedList(Object.keys(wordLists));
     },[wordLists]);
 
     const handleStartExerciseBtnClick = useCallback(() => {
-        onListSelected(Object.keys(selectedKeys));
-    }, [onListSelected, selectedKeys]);
+        onListSelected(selectedList);
+    }, [onListSelected, selectedList]);
 
-    const wordsCount = Object.keys(selectedKeys)
+    const handleSelectAllToggle = useCallback(() => {
+        setSelectedList(selectedList.length ? [] : Object.keys(wordLists));
+    }, [selectedList.length, wordLists]);
+
+    const wordListKeys = Object.keys(wordLists);
+    const wordsCount = selectedList
         .reduce((sum, k) => sum + Object.keys(wordLists[k]).length, 0);
 
     return (
         <div className={s.page}>
             <div className={s.learnBlock}>
-                {isInSelectState ? <div>
-                    Selected lists: {Object.keys(selectedKeys).length} / {Object.keys(wordLists).length}
-                    &nbsp;
-                    ({wordsCount} {pluralize(wordsCount, ['word', 'words'])})
-                    &nbsp;&nbsp;
-                    <button onClick={handleStartExerciseBtnClick}>
-                        Let's roll!
-                    </button>
+                {isInSelectState ? <div className={s.selectingBlock}>
+                    <div>
+                        Selected {Object.keys(selectedList).length} of {Object.keys(wordLists).length} lists
+                        ({wordsCount} {pluralize(wordsCount, ['word', 'words'])})
+                        &nbsp;&nbsp;
+                        <button onClick={handleStartExerciseBtnClick}>
+                            Let's roll!
+                        </button>
+                    </div>
+                    <label className={s.selectAllBlock}>
+                        <Checkbox
+                            className={s.selectAllCheckbox}
+                            checked={selectedList.length === wordListKeys.length}
+                            indeterminate={selectedList.length> 0 && selectedList.length !== wordListKeys.length}
+                            onChange={handleSelectAllToggle}
+                        />Select all
+                    </label>
                 </div> :
                 <button
-                    className={s.learnButton}
                     onClick={handleLearnBtnClick}
                 >Learn!</button>}
             </div>
 
             <div className={s.blocksContainer}>
-                {Object.keys(wordLists).map(key => {
+                {wordListKeys.map(key => {
                     const keys = Object.keys(wordLists[key]);
                     const knownCount = keys.reduce((sum, word) =>
                         (sum + ((checkIfIsLearned(wordLists[key][word]) ? 1 : 0))) ,0);
 
                     return (
                         <div className={s.block} key={key}>
-                            {isInSelectState ? <input
-                                type='checkbox'
+                            {isInSelectState ? <Checkbox
                                 name={key}
                                 className={s.checkbox}
-                                checked={!!selectedKeys[key]}
+                                checked={selectedList.indexOf(key) !== -1}
                                 onChange={handleBlockSelectionToggle}
                             /> : null}
 
-                            <div className={s.blockTitle}>{formatDate(new Date(+key))}</div>
-                            <div className={s.blockTitle}>{Math.round(knownCount / keys.length * 100)}% learned</div>
+                            <div className={s.blockTitle}>
+                                {formatDate(new Date(+key))}
+                                <br/>
+                                {Math.round(knownCount / keys.length * 100)}% learned
+                            </div>
 
                             <div>
                                 <button
@@ -106,7 +117,7 @@ function DictionaryPage({
 
                                 {keys.slice(0, MAX_WORD_COUNT)
                                     .map(word => <div className={s.row}>
-                                        <span className={s.learnedMark}>{checkIfIsLearned(wordLists[key][word]) ? '✅' : ''}</span>
+                                        <span className={s.learnedMark}>{checkIfIsLearned(wordLists[key][word]) ? '✔' : ''}</span>
                                         <b>{word}</b> - {wordLists[key][word].definition}
                                     </div>)}
                                 {keys.length > MAX_WORD_COUNT ?

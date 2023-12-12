@@ -16,6 +16,6 @@ code {
     monospace;
 }
 
-button {
+button, input[type='checkbox'], label {
   cursor: pointer;
 }
