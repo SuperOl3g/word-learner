@@ -97,6 +97,7 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <div>
                 <input
                     ref={inputRef}
+                    key={definition}
                     type="text"
                     autoFocus
                     onKeyDown={handleInputKeyDown}

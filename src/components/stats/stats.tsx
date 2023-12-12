@@ -13,7 +13,9 @@ function Stats({ stats }: IProps) {
         setOpened(!isOpened);
     }, [isOpened]);
 
-    const content = Object.keys(stats).map(key =>
+    const content = Object.keys(stats)
+        .sort((a,b) => a < b ? 1 : -1)
+        .map(key =>
         <tr key={key}>
             <td>{(new Date(+key)).toLocaleDateString()}</td>
             <td>{Math.round(stats[key].pos / stats[key].total * 10000) / 100}%</td>
@@ -24,15 +26,19 @@ function Stats({ stats }: IProps) {
 
     return <div className={s.container}>
         {isOpened ?
-            <table className={s.table}>
-                <thead>
-                    <td>Date</td>
-                    <td>Correct</td>
-                    <td>Total</td>
-                    <td>Learned</td>
-                </thead>
-                {content.length ? content : <div className={s.placeholder}>No data</div>}
-            </table> : null
+            <div className={s.tableContainer}>
+                <table className={s.table}>
+                    <thead>
+                        <tr className={s.tableHeader}>
+                            <td>Date</td>
+                            <td>Correct</td>
+                            <td>Total</td>
+                            <td>Learned</td>
+                        </tr>
+                    </thead>
+                    {content.length ? content : <div className={s.placeholder}>No data</div>}
+                </table>
+            </div>: null
         }
         <button onClick={handleToggleClick}>Stats</button>
     </div>;

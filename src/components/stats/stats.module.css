@@ -4,19 +4,27 @@
     left: 20px;
 }
 
-.table {
-    background: white;
-    color: black;
+.tableContainer {
+    max-height: 300px;
+    overflow: auto;
     margin-bottom: 4px;
 }
 
-.table thead {
+.table {
+    background: white;
+    color: black;
+    border-collapse: collapse;
+}
+
+.tableHeader {
+    position: sticky;
+    top: 0;
     background: #ccc;
     font-weight: bold;
 }
 
 .table td {
-    padding: 2px 4px;
+    padding: 4px 8px;
 }
 
 .placeholder {
