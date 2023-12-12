@@ -5,25 +5,30 @@ import {IDictionary} from "../../types";
 import {useWordsPull} from "./useWordsPull";
 
 interface IProps {
-    words: IDictionary,
+    wordLists: {
+        [key: string]: IDictionary
+    },
+    curListKeys: Array<string>,
+
     onBackButtonClick: () => void,
-    onAnswer: (currentWord: string, isPositive: boolean) => void,
+    onAnswer: (list:string, word: string, isPositive: boolean) => void,
 }
 
 const MAX_INPUT_ERR_COUNT = 5;
 
 const normalize = (str: string) => str.trim().toLowerCase();
 
-function ExercisePage({ words, onBackButtonClick, onAnswer }: IProps) {
+function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: IProps) {
     const [counter, setCounter] = useState(0);
     const [correctCounter, setCorrectCounter] = useState(0);
-    const {ex: {newWord: currentWord, isReversedEx, isTypingEx}, setNewWord } = useWordsPull(words);
+    const {ex: {curWord, curList, isReversedEx, isTypingEx}, setNewWord } =
+        useWordsPull(wordLists, curListKeys);
     const [isInCheckState, setCheckStateFlag] = useState(false);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [inputErrorsCount, setInputErrorCount] = useState(0);
 
-    const word = isReversedEx ? words[currentWord].definition : currentWord;
-    const definition = isReversedEx ? currentWord : words[currentWord].definition;
+    const word = isReversedEx ? wordLists[curList][curWord].definition : curWord;
+    const definition = isReversedEx ? curWord : wordLists[curList][curWord].definition;
 
     const handleCheckBtnClick = useCallback(() => {
         setCheckStateFlag(true);
@@ -37,8 +42,8 @@ function ExercisePage({ words, onBackButtonClick, onAnswer }: IProps) {
         setNewWord();
         setCheckStateFlag(false);
 
-        onAnswer(currentWord, isCorrect);
-    }, [currentWord, counter, setNewWord, onAnswer, correctCounter]);
+        onAnswer(curList, curWord, isCorrect);
+    }, [counter, setNewWord, onAnswer, curList, curWord, correctCounter]);
 
     const handleInputCheckClick = useCallback(() => {
         if(normalize(inputRef.current?.value || '') === normalize(definition)) {
@@ -99,6 +104,8 @@ function ExercisePage({ words, onBackButtonClick, onAnswer }: IProps) {
         </div>
     }
 
+    const wordsCount = curListKeys.reduce((sum, listKey) => (sum + Object.keys(wordLists[listKey]).length), 0);
+
     return <div className={s.container}>
     <button
             className={s.backButton}
@@ -108,7 +115,7 @@ function ExercisePage({ words, onBackButtonClick, onAnswer }: IProps) {
         </button>
 
         <div className={s.counter}>
-            Words in pull: {Object.keys(words).length}
+            Words in pull: {wordsCount}
             <br/>
             Session correctness: {counter === 0 ? '-' :
             `${Math.round(correctCounter / counter * 10000) / 100}% (${correctCounter} / ${counter})`

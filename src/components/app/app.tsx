@@ -8,7 +8,7 @@ import {useDictionary} from "./useDictionary";
 
 function App() {
     const { stats, updateStats } = useStats();
-    const {wordLists, addWordList, removeWordList} = useDictionary();
+    const {wordLists, addWordList, removeWordList, updateWordStat} = useDictionary();
     const [curListKeys, setCurListsKeys] =
         useState<Array<string>>([]);
 
@@ -34,9 +34,10 @@ function App() {
     }, []);
 
 
-    const handleAnswer = useCallback((currentWord: string, isPositive: boolean) => {
+    const handleAnswer = useCallback((listKey: string, word: string, isPositive: boolean) => {
         updateStats(isPositive);
-    }, [updateStats]);
+        updateWordStat(listKey, word, isPositive);
+    }, [updateStats, updateWordStat]);
 
     return (
         <div className={s.app}>
@@ -48,10 +49,8 @@ function App() {
                     onListSelected={handleStartExercise}
                 /> :
                 <ExercisePage
-                    words={curListKeys.reduce((words, key) => ({
-                        ...words,
-                        ...wordLists[key],
-                    }), {})}
+                    wordLists={wordLists}
+                    curListKeys={curListKeys}
                     onBackButtonClick={handleBackBtnClick}
                     onAnswer={handleAnswer}
                 />}

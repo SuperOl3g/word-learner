@@ -8,7 +8,6 @@ export const useDictionary = () => {
     const [wordLists, setWordLists] =
         useState<{ [key: string]: IDictionary }>(LS.get(LS_WORD_LISTS_KEY) || {});
 
-
     const addWordList = useCallback((list: { [key: string]: string }) => {
         if (!Object.keys(list)?.length) {
             return;
@@ -34,6 +33,24 @@ export const useDictionary = () => {
         LS.set(LS_WORD_LISTS_KEY, newLists);
     }, [wordLists]);
 
+    const updateWordStat = useCallback((listKey: string, word: string, isPositive: boolean) => {
+        const newLists = {
+            ...wordLists,
+            [listKey]: {
+                ...wordLists[listKey],
+                [word]: {
+                    ...wordLists[listKey][word],
+                    correctAnswersStreak: isPositive ? (( wordLists[listKey][word]?.correctAnswersStreak || 0) + 1) : 0,
+                    lastAsked: Date.now(),
+                }
+            }
+        }
 
-    return { wordLists, addWordList, removeWordList};
+        setWordLists(newLists)
+
+        LS.set(LS_WORD_LISTS_KEY, newLists);
+    }, [wordLists]);
+
+
+    return { wordLists, addWordList, removeWordList, updateWordStat};
 }
