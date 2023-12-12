@@ -2,7 +2,8 @@ import React, {ChangeEvent, useCallback, useState} from 'react';
 import s from './dictionary-page.module.css';
 import NewWordListEditor from "../../components/new-word-list-editor/new-word-list-editor";
 import {formatDate, pluralize} from "../../utils";
-import {IDictionary} from "../../types";
+import {IDictionary, ValueOf} from "../../types";
+import {KNOWING_CORRECT_REPEATS_THRESHOLD} from "../exercise-page/useWordsPull";
 
 interface IProps {
     wordLists: {
@@ -15,6 +16,8 @@ interface IProps {
 }
 
 const MAX_WORD_COUNT = 10;
+
+const checkIfIsLearned = (word: ValueOf<IDictionary>) => (word.correctAnswersStreak || 0) >= KNOWING_CORRECT_REPEATS_THRESHOLD;
 
 function DictionaryPage({
     wordLists,
@@ -78,6 +81,8 @@ function DictionaryPage({
             <div className={s.blocksContainer}>
                 {Object.keys(wordLists).map(key => {
                     const keys = Object.keys(wordLists[key]);
+                    const knownCount = keys.reduce((sum, word) =>
+                        (sum + ((checkIfIsLearned(wordLists[key][word]) ? 1 : 0))) ,0);
 
                     return (
                         <div className={s.block} key={key}>
@@ -90,6 +95,7 @@ function DictionaryPage({
                             /> : null}
 
                             <div className={s.blockTitle}>{formatDate(new Date(+key))}</div>
+                            <div className={s.blockTitle}>{Math.round(knownCount / keys.length * 100)}% learned</div>
 
                             <div>
                                 <button
@@ -100,10 +106,11 @@ function DictionaryPage({
 
                                 {keys.slice(0, MAX_WORD_COUNT)
                                     .map(word => <div className={s.row}>
+                                        <span className={s.learnedMark}>{checkIfIsLearned(wordLists[key][word]) ? '✅' : ''}</span>
                                         <b>{word}</b> - {wordLists[key][word].definition}
                                     </div>)}
                                 {keys.length > MAX_WORD_COUNT ?
-                                    <div><br/>... and {keys.length - MAX_WORD_COUNT} more</div>
+                                    <div><br/><span className={s.learnedMark} />... and {keys.length - MAX_WORD_COUNT} more</div>
                                     : ''}
                             </div>
                         </div>);

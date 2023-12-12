@@ -34,8 +34,8 @@ function App() {
     }, []);
 
 
-    const handleAnswer = useCallback((listKey: string, word: string, isPositive: boolean) => {
-        updateStats(isPositive);
+    const handleAnswer = useCallback((listKey: string, word: string, isPositive: boolean, isLearned: boolean) => {
+        updateStats(isPositive, isLearned);
         updateWordStat(listKey, word, isPositive);
     }, [updateStats, updateWordStat]);
 

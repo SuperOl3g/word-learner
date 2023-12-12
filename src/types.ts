@@ -5,3 +5,5 @@ export interface IDictionary {
         lastAsked?: number,
     }
 }
+
+export type ValueOf<T> = T[keyof T];

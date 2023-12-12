@@ -2,7 +2,7 @@ import React, { KeyboardEvent, useCallback, useRef, useState} from 'react';
 import s from './exercise-page.module.css';
 import {pluralize} from "../../utils";
 import {IDictionary} from "../../types";
-import {useWordsPull} from "./useWordsPull";
+import {KNOWING_CORRECT_REPEATS_THRESHOLD, useWordsPull} from "./useWordsPull";
 
 interface IProps {
     wordLists: {
@@ -11,7 +11,7 @@ interface IProps {
     curListKeys: Array<string>,
 
     onBackButtonClick: () => void,
-    onAnswer: (list:string, word: string, isPositive: boolean) => void,
+    onAnswer: (list:string, word: string, isPositive: boolean, isLearned: boolean) => void,
 }
 
 const MAX_INPUT_ERR_COUNT = 5;
@@ -21,7 +21,8 @@ const normalize = (str: string) => str.trim().toLowerCase();
 function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: IProps) {
     const [counter, setCounter] = useState(0);
     const [correctCounter, setCorrectCounter] = useState(0);
-    const {ex: {curWord, curList, isReversedEx, isTypingEx}, setNewWord } =
+    const [learnedCounter, setLearnedCounter] = useState(0);
+    const {ex: {curWord, curList, isReversedEx, isTypingEx}, setNewWord, updatePull } =
         useWordsPull(wordLists, curListKeys);
     const [isInCheckState, setCheckStateFlag] = useState(false);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -34,25 +35,33 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
         setCheckStateFlag(true);
     }, []);
 
-    const handleBtnClick = useCallback((isCorrect: boolean) => {
+    const handleAnswer = useCallback((isCorrect: boolean) => {
         setCounter(counter + 1);
         if (isCorrect) {
             setCorrectCounter(correctCounter + 1);
         }
+
+        const isLearned = isCorrect && wordLists[curList][curWord].correctAnswersStreak === (KNOWING_CORRECT_REPEATS_THRESHOLD - 1);
+
+        if (isLearned) {
+            setLearnedCounter(learnedCounter + 1);
+            updatePull(curList, curWord);
+        }
+
         setNewWord();
         setCheckStateFlag(false);
 
-        onAnswer(curList, curWord, isCorrect);
+        onAnswer(curList, curWord, isCorrect, isLearned);
     }, [counter, setNewWord, onAnswer, curList, curWord, correctCounter]);
 
     const handleInputCheckClick = useCallback(() => {
         if(normalize(inputRef.current?.value || '') === normalize(definition)) {
-            handleBtnClick(true);
+            handleAnswer(true);
             setInputErrorCount(0);
         } else {
             setInputErrorCount(inputErrorsCount + 1);
         }
-    }, [definition, handleBtnClick, inputErrorsCount]);
+    }, [definition, handleAnswer, inputErrorsCount]);
 
     const handleInputKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -61,9 +70,9 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
     }, [handleInputCheckClick]);
 
     const handleInputSkipClick = useCallback(() => {
-        handleBtnClick(false);
+        handleAnswer(false);
         setInputErrorCount(0);
-    }, [handleBtnClick]);
+    }, [handleAnswer]);
 
     let checkBlock = isInCheckState ?
         <div className={s.checkBlock}>
@@ -72,9 +81,9 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <br/>
             <div className={s.checkTitle}>You were right?</div>
             <div>
-                <button onClick={() => handleBtnClick(true)}>Yes</button>
+                <button onClick={() => handleAnswer(true)}>Yes</button>
                 &nbsp;&nbsp;
-                <button onClick={() => handleBtnClick(false)}>Nope</button>
+                <button onClick={() => handleAnswer(false)}>Nope</button>
             </div>
         </div> :
         <div className={s.checkBlock}>
@@ -119,7 +128,9 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <br/>
             Session correctness: {counter === 0 ? '-' :
             `${Math.round(correctCounter / counter * 10000) / 100}% (${correctCounter} / ${counter})`
-        }
+            }
+            <br/>
+            Learned words: {learnedCounter}
         </div>
         <div>How to translate the next {pluralize(word.split(' ').length, ['word', 'words'])}:</div>
         <span><b>{word}</b> ?</span>

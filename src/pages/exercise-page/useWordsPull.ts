@@ -2,7 +2,7 @@ import {useCallback, useState} from "react";
 import {IDictionary} from "../../types";
 
 const ACTIVE_WORDS_PULL_SIZE = 25;
-export const KNOWING_CORRECT_REPEATS_THRESHOLD = 4;
+export const KNOWING_CORRECT_REPEATS_THRESHOLD = 5;
 const KNOWING_DURATION = 30 * 24 * 60 * 60;
 const KNOWN_WORD_ADDING_PROBABILITY = 0.125 ;
 
@@ -17,7 +17,9 @@ const getNewWords = (wordsCount: number, wordLists: { [key: string]: IDictionary
 
     curListKeys.forEach(listKey => {
         Object.keys(wordLists[listKey]).forEach((word => {
-            if (pull.indexOf(word) !== - 1) {
+            const key = `${listKey}.${word}`;
+
+            if (pull.indexOf(key) !== - 1) {
                 return;
             }
 
@@ -33,7 +35,7 @@ const getNewWords = (wordsCount: number, wordLists: { [key: string]: IDictionary
                 arr = notStartedWords;
             }
 
-            arr.push(`${listKey}.${word}`);
+            arr.push(key);
             sumLen++;
         }));
     })
@@ -67,11 +69,11 @@ const getNewWordFromPull = (wordLists: { [key: string]: IDictionary }, pull: Arr
         newWord = key.slice(dotIndex + 1);
     } while (newWord === curWord && pull.length !== 1);
 
-    const isLast = wordLists[newList][newWord]?.correctAnswersStreak === KNOWING_CORRECT_REPEATS_THRESHOLD - 1;
+    const isLast = (wordLists[newList][newWord]?.correctAnswersStreak || 0) >= (KNOWING_CORRECT_REPEATS_THRESHOLD - 1);
 
     return {
-        newList,
-        newWord,
+        curList: newList,
+        curWord: newWord,
         isReversedEx: isLast || Math.random() < REVERSE_EX_PROBABILITY,
         isTypingEx: isLast,
     };
@@ -79,19 +81,29 @@ const getNewWordFromPull = (wordLists: { [key: string]: IDictionary }, pull: Arr
 
 export const useWordsPull = (wordLists: { [key: string]: IDictionary }, curListKeys: Array<string>) => {
     const [wordPull, setWordPull] = useState(getNewWords(ACTIVE_WORDS_PULL_SIZE, wordLists, curListKeys, []));
-    const [{newWord, newList, isReversedEx, isTypingEx}, setNewWord] =
+    const [{curWord, curList, isReversedEx, isTypingEx}, setNewWord] =
         useState(getNewWordFromPull(wordLists, wordPull));
 
-    const fn = useCallback(() => setNewWord(getNewWordFromPull(wordLists, wordPull, newWord)),
-        [newWord, wordPull, wordLists]);
+    const setNewWordFn = useCallback(() => setNewWord(getNewWordFromPull(wordLists, wordPull, curWord)),
+        [curWord, wordPull, wordLists]);
+
+    const updatePull = useCallback( (oldList: string, oldWord: string) => {
+        const newPull = [...wordPull.filter(k => k !== `${oldList}.${oldWord}` )];
+
+        setWordPull([
+            ...newPull,
+            ...getNewWords(1, wordLists, curListKeys, newPull),
+        ]);
+    }, [curListKeys, wordLists, wordPull]);
 
     return {
         ex: {
-            curList: newList,
-            curWord: newWord,
+            curList,
+            curWord,
             isReversedEx,
             isTypingEx
         },
-        setNewWord: fn,
+        setNewWord: setNewWordFn,
+        updatePull,
     };
 };

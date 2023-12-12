@@ -18,6 +18,7 @@ function Stats({ stats }: IProps) {
             <td>{(new Date(+key)).toLocaleDateString()}</td>
             <td>{Math.round(stats[key].pos / stats[key].total * 10000) / 100}%</td>
             <td>{stats[key].total}</td>
+            <td>{stats[key].learned}</td>
         </tr>
     );
 
@@ -28,6 +29,7 @@ function Stats({ stats }: IProps) {
                     <td>Date</td>
                     <td>Correct</td>
                     <td>Total</td>
+                    <td>Learned</td>
                 </thead>
                 {content.length ? content : <div className={s.placeholder}>No data</div>}
             </table> : null
