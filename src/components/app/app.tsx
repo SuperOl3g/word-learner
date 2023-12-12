@@ -1,92 +1,59 @@
 import React, {useCallback, useState} from 'react';
 import s from './app.module.css';
-import {LS, mapObj} from "../../utils";
 import DictionaryPage from "../../pages/dictionary-page/dictionary-page";
 import ExercisePage from "../../pages/exercise-page/exercise-page";
 import Stats from "../stats/stats";
-export interface IStatState {
-    [date: string]: { pos: number, total: number }
-}
-
-const LS_DICT_KEY = '__wordList';
-const LS_STAT_KEY = '__ex_stats';
-
+import {useStats} from "./useStats";
+import {useDictionary} from "./useDictionary";
 
 function App() {
-    const [stats, setStats] =
-        useState<IStatState>(LS.get<IStatState>(LS_STAT_KEY) || {});
-    const [currentDictionariesKeys, setCurDictKeys] =
+    const { stats, updateStats } = useStats();
+    const {wordLists, addWordList, removeWordList} = useDictionary();
+    const [curListKeys, setCurListsKeys] =
         useState<Array<string>>([]);
-    const [dictionaries, updateDictionaries] =
-        useState<{ [key: string]: { [key: string]: string } }>(LS.get(LS_DICT_KEY) || {});
 
-    const handleAddConfirm = useCallback((dict: { [key: string]: string }) => {
-        const newBlock = Object.keys(dict)?.length ? { [Date.now()]: dict } : {};
 
-        const dicts = {
-            ...dictionaries,
-            ...newBlock,
-        };
-
-        updateDictionaries(dicts);
-        LS.set(LS_DICT_KEY, dicts);
-    }, [dictionaries]);
+    const handleWordListAdd = useCallback((list: { [key: string]: string }) => {
+        addWordList(list);
+    }, [addWordList]);
 
     const handleBackBtnClick = useCallback(() => {
-        setCurDictKeys( []);
+        setCurListsKeys( []);
     }, []);
 
-    const handleCrossClick = useCallback((key: string)  => {
+    const handleWordListRemove = useCallback((key: string)  => {
         if (!confirm('Do you really want to remove this item?')) { // eslint-disable-line
             return;
         }
 
-        const newDictionaries = { ...dictionaries };
-        delete newDictionaries[key];
+        removeWordList(key)
+    }, [removeWordList]);
 
-        updateDictionaries(newDictionaries)
-
-        LS.set(LS_DICT_KEY, newDictionaries);
-    }, [dictionaries]);
-
-    const handleStartExercise = useCallback((dictKeys: Array<string>) => {
-        setCurDictKeys(dictKeys);
+    const handleStartExercise = useCallback((listKeys: Array<string>) => {
+        setCurListsKeys(listKeys);
     }, []);
 
 
-    const handleStatCountersUpdate = useCallback((isPositive: boolean) => {
-        const key = new Date(new Date().toDateString()).valueOf();
-        const newStats = {
-            ...stats,
-            [key]: {
-                pos: (stats[key]?.pos || 0) + (isPositive ? 1 : 0),
-                total: (stats[key]?.total || 0) + 1,
-            }
-        };
-
-        setStats(newStats);
-        LS.set(LS_STAT_KEY, newStats);
-    }, [stats]);
+    const handleAnswer = useCallback((currentWord: string, isPositive: boolean) => {
+        updateStats(isPositive);
+    }, [updateStats]);
 
     return (
         <div className={s.app}>
-            {!currentDictionariesKeys.length ?
-                    <DictionaryPage
-                        dictionaries={dictionaries}
-                        onDictionaryRemove={handleCrossClick}
-                        onDictionaryAdd={handleAddConfirm}
-                        onDictionariesSelected={handleStartExercise}
-                    />
-                :
+            {!curListKeys.length ?
+                <DictionaryPage
+                    wordLists={wordLists}
+                    onListRemove={handleWordListRemove}
+                    onListAdd={handleWordListAdd}
+                    onListSelected={handleStartExercise}
+                /> :
                 <ExercisePage
-                    words={currentDictionariesKeys.reduce((words, key) => ({
+                    words={curListKeys.reduce((words, key) => ({
                         ...words,
-                        ...mapObj(dictionaries[key], (val) => ({
-                            definition: val,
-                        })),
+                        ...wordLists[key],
                     }), {})}
                     onBackButtonClick={handleBackBtnClick}
-                    onAnswer={handleStatCountersUpdate}
+                    onAnswer={handleAnswer}
                 />}
             <Stats stats={stats} />
         </div>

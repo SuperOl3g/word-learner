@@ -1,27 +1,26 @@
-import React, {ChangeEvent, Fragment, useCallback, useState} from 'react';
+import React, {ChangeEvent, useCallback, useState} from 'react';
 import s from './dictionary-page.module.css';
-import NewBlockEditor from "../../components/new-block-editor/new-block-editor";
+import NewWordListEditor from "../../components/new-word-list-editor/new-word-list-editor";
 import {formatDate, pluralize} from "../../utils";
+import {IDictionary} from "../../types";
 
 interface IProps {
-    dictionaries: {
-        [key: string]: {
-            [key: string]: string
-        }
+    wordLists: {
+        [key: string]: IDictionary
     },
 
-    onDictionaryAdd: (dict: { [key: string]: string }) => void,
-    onDictionaryRemove: (key: string) => void,
-    onDictionariesSelected: (dictKeys: Array<string>) => void,
+    onListAdd: (dict: { [key: string]: string }) => void,
+    onListRemove: (key: string) => void,
+    onListSelected: (dictKeys: Array<string>) => void,
 }
 
 const MAX_WORD_COUNT = 10;
 
 function DictionaryPage({
-    dictionaries,
-    onDictionaryAdd,
-    onDictionaryRemove,
-    onDictionariesSelected,
+    wordLists,
+    onListAdd,
+    onListRemove,
+    onListSelected,
 }: IProps) {
     const [isInSelectState, setSelectState] = useState(false);
     const [selectedKeys, setSelectedKeys] =
@@ -43,26 +42,26 @@ function DictionaryPage({
     const handleLearnBtnClick = useCallback(() => {
         const selectedKeys: {[key: string]: boolean} = {};
 
-        Object.keys(dictionaries).forEach(key => {
+        Object.keys(wordLists).forEach(key => {
             selectedKeys[key] = true;
         });
 
         setSelectState(true);
         setSelectedKeys(selectedKeys);
-    },[dictionaries]);
+    },[wordLists]);
 
     const handleStartExerciseBtnClick = useCallback(() => {
-        onDictionariesSelected(Object.keys(selectedKeys));
-    }, [onDictionariesSelected, selectedKeys]);
+        onListSelected(Object.keys(selectedKeys));
+    }, [onListSelected, selectedKeys]);
 
     const wordsCount = Object.keys(selectedKeys)
-        .reduce((sum, k) => sum + Object.keys(dictionaries[k]).length, 0);
+        .reduce((sum, k) => sum + Object.keys(wordLists[k]).length, 0);
 
     return (
         <div className={s.page}>
             <div className={s.learnBlock}>
                 {isInSelectState ? <div>
-                    Selected lists: {Object.keys(selectedKeys).length} / {Object.keys(dictionaries).length}
+                    Selected lists: {Object.keys(selectedKeys).length} / {Object.keys(wordLists).length}
                     &nbsp;
                     ({wordsCount} {pluralize(wordsCount, ['word', 'words'])})
                     &nbsp;&nbsp;
@@ -77,8 +76,8 @@ function DictionaryPage({
             </div>
 
             <div className={s.blocksContainer}>
-                {Object.keys(dictionaries).map(key => {
-                    const keys = Object.keys(dictionaries[key]);
+                {Object.keys(wordLists).map(key => {
+                    const keys = Object.keys(wordLists[key]);
 
                     return (
                         <div className={s.block} key={key}>
@@ -95,13 +94,13 @@ function DictionaryPage({
                             <div>
                                 <button
                                     className={s.crossButton}
-                                    onClick={() => onDictionaryRemove(key)}
+                                    onClick={() => onListRemove(key)}
                                 >x
                                 </button>
 
                                 {keys.slice(0, MAX_WORD_COUNT)
                                     .map(word => <div className={s.row}>
-                                        <b>{word}</b> - {dictionaries[key][word]}
+                                        <b>{word}</b> - {wordLists[key][word].definition}
                                     </div>)}
                                 {keys.length > MAX_WORD_COUNT ?
                                     <div><br/>... and {keys.length - MAX_WORD_COUNT} more</div>
@@ -110,7 +109,7 @@ function DictionaryPage({
                         </div>);
                 })}
                 <div className={s.block}>
-                    <NewBlockEditor onConfirm={onDictionaryAdd}/>
+                    <NewWordListEditor onConfirm={onListAdd}/>
                 </div>
             </div>
         </div>

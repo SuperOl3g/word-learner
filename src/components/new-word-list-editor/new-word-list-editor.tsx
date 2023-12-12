@@ -1,12 +1,12 @@
 import React, {ChangeEvent, Fragment, useCallback, useState} from 'react';
 import classNames from 'classnames';
-import s from './new-block-edtior.module.css';
+import s from './new-word-list-edtior.module.css';
 
 interface IProps {
     onConfirm?: (dict:{[key: string]: string}) => void
 }
 
-function NewBlockEditor({ onConfirm }: IProps) {
+function NewWordListEditor({ onConfirm }: IProps) {
     const [value, setValue] = useState('');
     const [isInAddingState, setAddingState] = useState(false);
     const [isError, setErrorState] = useState(false);
@@ -16,7 +16,7 @@ function NewBlockEditor({ onConfirm }: IProps) {
     }, []);
 
     const handleConfirmClick = useCallback(() => {
-        const dictionary: { [key: string]: string } = {};
+        const wordList: { [key: string]: string } = {};
 
         const isError = value
             .split('\n')
@@ -27,13 +27,13 @@ function NewBlockEditor({ onConfirm }: IProps) {
                 if (!meaning) {
                     return true;
                 }
-                dictionary[word.trim()] = meaning.trim();
+                wordList[word.trim()] = meaning.trim();
             });
 
         if (isError) {
             setErrorState(true);
         } else {
-            onConfirm?.(dictionary);
+            onConfirm?.(wordList);
 
             setAddingState(false);
             setValue('');
@@ -71,4 +71,4 @@ function NewBlockEditor({ onConfirm }: IProps) {
     ;
 }
 
-export default NewBlockEditor;
+export default NewWordListEditor;

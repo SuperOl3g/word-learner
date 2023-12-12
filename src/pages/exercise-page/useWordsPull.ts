@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {IDictionary} from "../../types";
 
 const ACTIVE_WORDS_PULL_SIZE = 25;
@@ -80,8 +80,11 @@ export const useWordsPull = (words: IDictionary) => {
     const [{newWord,isReversedEx, isTypingEx}, setNewWord] =
         useState(getNewWordFromPull(words, wordPull));
 
+    const fn = useCallback(() => setNewWord(getNewWordFromPull(words, wordPull, newWord)),
+        [newWord, wordPull, words]);
+
     return {
         ex: {newWord, isReversedEx, isTypingEx},
-        setNewWord: () => setNewWord(getNewWordFromPull(words, wordPull, newWord)),
+        setNewWord: fn,
     };
 };

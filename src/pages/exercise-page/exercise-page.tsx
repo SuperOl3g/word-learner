@@ -7,7 +7,7 @@ import {useWordsPull} from "./useWordsPull";
 interface IProps {
     words: IDictionary,
     onBackButtonClick: () => void,
-    onAnswer: (isPositive: boolean) => void,
+    onAnswer: (currentWord: string, isPositive: boolean) => void,
 }
 
 const MAX_INPUT_ERR_COUNT = 5;
@@ -37,8 +37,8 @@ function ExercisePage({ words, onBackButtonClick, onAnswer }: IProps) {
         setNewWord();
         setCheckStateFlag(false);
 
-        onAnswer(isCorrect);
-    }, [counter, setNewWord, onAnswer, correctCounter]);
+        onAnswer(currentWord, isCorrect);
+    }, [currentWord, counter, setNewWord, onAnswer, correctCounter]);
 
     const handleInputCheckClick = useCallback(() => {
         if(normalize(inputRef.current?.value || '') === normalize(definition)) {

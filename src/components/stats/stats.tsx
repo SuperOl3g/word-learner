@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from "react";
 import s from './stats.module.css';
-import {IStatState} from "../app/app";
+import {IStatState} from "../app/useStats";
 
 interface IProps {
     stats: IStatState
