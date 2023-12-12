@@ -1,37 +1,29 @@
 import React, { KeyboardEvent, useCallback, useRef, useState} from 'react';
 import s from './exercise-page.module.css';
 import {pluralize} from "../../utils";
+import {IDictionary} from "../../types";
+import {useWordsPull} from "./useWordsPull";
 
 interface IProps {
-    words: { [key: string]: string },
+    words: IDictionary,
     onBackButtonClick: () => void,
     onAnswer: (isPositive: boolean) => void,
 }
 
-const REVERSE_EX_PROBABILITY = 0.2;
 const MAX_INPUT_ERR_COUNT = 5;
-
-const getNewWord = (words: IProps['words']): [string, boolean, boolean] => {
-    const keys = Object.keys(words);
-    return [
-        keys[Math.round(Math.random() * keys.length)],
-        Math.random() < REVERSE_EX_PROBABILITY,
-        Math.random() < 0.5,
-    ];
-}
 
 const normalize = (str: string) => str.trim().toLowerCase();
 
 function ExercisePage({ words, onBackButtonClick, onAnswer }: IProps) {
     const [counter, setCounter] = useState(0);
     const [correctCounter, setCorrectCounter] = useState(0);
-    const [[currentWord,isReversedEx, isTypingEx], setNewWord] = useState(getNewWord(words));
+    const {ex: {newWord: currentWord, isReversedEx, isTypingEx}, setNewWord } = useWordsPull(words);
     const [isInCheckState, setCheckStateFlag] = useState(false);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [inputErrorsCount, setInputErrorCount] = useState(0);
 
-    const word = isReversedEx ? words[currentWord] : currentWord;
-    const definition = isReversedEx ? currentWord : words[currentWord];
+    const word = isReversedEx ? words[currentWord].definition : currentWord;
+    const definition = isReversedEx ? currentWord : words[currentWord].definition;
 
     const handleCheckBtnClick = useCallback(() => {
         setCheckStateFlag(true);
@@ -42,11 +34,11 @@ function ExercisePage({ words, onBackButtonClick, onAnswer }: IProps) {
         if (isCorrect) {
             setCorrectCounter(correctCounter + 1);
         }
-        setNewWord(getNewWord(words));
+        setNewWord();
         setCheckStateFlag(false);
 
         onAnswer(isCorrect);
-    }, [counter, words, onAnswer, correctCounter]);
+    }, [counter, setNewWord, onAnswer, correctCounter]);
 
     const handleInputCheckClick = useCallback(() => {
         if(normalize(inputRef.current?.value || '') === normalize(definition)) {

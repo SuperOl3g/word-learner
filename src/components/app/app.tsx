@@ -1,7 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import s from './app.module.css';
-import {LS} from "../../utils";
-import {IDictionary} from "../../types";
+import {LS, mapObj} from "../../utils";
 import DictionaryPage from "../../pages/dictionary-page/dictionary-page";
 import ExercisePage from "../../pages/exercise-page/exercise-page";
 import Stats from "../stats/stats";
@@ -19,9 +18,9 @@ function App() {
     const [currentDictionariesKeys, setCurDictKeys] =
         useState<Array<string>>([]);
     const [dictionaries, updateDictionaries] =
-        useState<{ [key: string]: IDictionary }>(LS.get(LS_DICT_KEY) || {});
+        useState<{ [key: string]: { [key: string]: string } }>(LS.get(LS_DICT_KEY) || {});
 
-    const handleAddConfirm = useCallback((dict: IDictionary) => {
+    const handleAddConfirm = useCallback((dict: { [key: string]: string }) => {
         const newBlock = Object.keys(dict)?.length ? { [Date.now()]: dict } : {};
 
         const dicts = {
@@ -82,7 +81,9 @@ function App() {
                 <ExercisePage
                     words={currentDictionariesKeys.reduce((words, key) => ({
                         ...words,
-                        ...dictionaries[key],
+                        ...mapObj(dictionaries[key], (val) => ({
+                            definition: val,
+                        })),
                     }), {})}
                     onBackButtonClick={handleBackBtnClick}
                     onAnswer={handleStatCountersUpdate}

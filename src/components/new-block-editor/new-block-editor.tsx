@@ -1,10 +1,9 @@
 import React, {ChangeEvent, Fragment, useCallback, useState} from 'react';
 import classNames from 'classnames';
 import s from './new-block-edtior.module.css';
-import {IDictionary} from "../../types";
 
 interface IProps {
-    onConfirm?: (dict: IDictionary) => void
+    onConfirm?: (dict:{[key: string]: string}) => void
 }
 
 function NewBlockEditor({ onConfirm }: IProps) {
@@ -17,7 +16,7 @@ function NewBlockEditor({ onConfirm }: IProps) {
     }, []);
 
     const handleConfirmClick = useCallback(() => {
-        const dictionary: IDictionary = {};
+        const dictionary: { [key: string]: string } = {};
 
         const isError = value
             .split('\n')
