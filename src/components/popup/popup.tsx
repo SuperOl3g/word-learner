@@ -1,5 +1,5 @@
 import s from './popup.module.css';
-import {SyntheticEvent, useCallback} from "react";
+import {KeyboardEvent, SyntheticEvent, useCallback} from "react";
 
 interface IProps {
     children?: React.ReactNode,
@@ -15,7 +15,18 @@ function Popup({ children, opened, onClose }:IProps) {
         }
     }, [onClose]);
 
-    return opened ? <div className={s.overlay} onClick={handleLayoutClick}>
+    const handleKeyDown = useCallback((e:KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            onClose?.();
+        }
+    }, [onClose]);
+
+    return opened ? <div
+        className={s.overlay}
+        onClick={handleLayoutClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={-1}
+    >
         <div className={s.container}>
             <button className={s.closeButton} onClick={onClose}>x</button>
             {children}
