@@ -81,13 +81,16 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <br/>
             <div className={s.checkTitle}>You were right?</div>
             <div>
-                <button onClick={() => handleAnswer(true)}>Yes</button>
+                <button autoFocus onClick={() => handleAnswer(true)}>Yes</button>
                 &nbsp;&nbsp;
                 <button onClick={() => handleAnswer(false)}>Nope</button>
             </div>
         </div> :
         <div className={s.checkBlock}>
-            <button onClick={handleCheckBtnClick}>Check</button>
+            <button
+                autoFocus
+                onClick={handleCheckBtnClick}
+            >Check</button>
         </div>;
 
     if (isReversedEx && isTypingEx) {
