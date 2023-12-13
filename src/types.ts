@@ -7,3 +7,5 @@ export interface IDictionary {
 }
 
 export type ValueOf<T> = T[keyof T];
+
+export type CallbackHandler<T> = (_: any, obj: { value?: T  }) => void;

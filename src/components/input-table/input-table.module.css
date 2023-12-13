@@ -1,0 +1,27 @@
+.row {
+    display: flex;
+    position: relative;
+}
+
+.removeButton {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translate(50%,-50%);
+    width: 16px;
+    height: 16px;
+    visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.row:hover .removeButton,
+.row:focus-within .removeButton {
+    visibility: visible;
+}
+
+.input {
+    width: 100%;
+    padding: 4px 6px;
+}

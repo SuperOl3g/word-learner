@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useCallback, useState} from 'react';
 import s from './dictionary-page.module.css';
-import NewWordListEditor from "../../components/new-word-list-editor/new-word-list-editor";
+import NewWordListEditor from "./new-word-list-editor/new-word-list-editor";
 import {formatDate, pluralize} from "../../utils";
 import {IDictionary, ValueOf} from "../../types";
 import {KNOWING_CORRECT_REPEATS_THRESHOLD} from "../exercise-page/useWordsPull";
