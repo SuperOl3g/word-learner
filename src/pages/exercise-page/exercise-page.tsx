@@ -99,6 +99,7 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
                     ref={inputRef}
                     key={definition}
                     type="text"
+                    autoComplete='off'
                     autoFocus
                     onKeyDown={handleInputKeyDown}
                 />

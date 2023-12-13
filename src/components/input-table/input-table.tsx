@@ -1,4 +1,4 @@
-import {ChangeEvent, FocusEvent, SyntheticEvent, useCallback, useEffect, useRef} from "react";
+import {ChangeEvent, ClipboardEvent, FocusEvent, SyntheticEvent, useCallback, useRef} from "react";
 import s from './input-table.module.css';
 
 interface IProps {
@@ -10,33 +10,35 @@ interface IProps {
 const wordPlaceholder = 'Word';
 const translationPlaceholder = 'Translation';
 
+const copyVal = (val?: Array<[string, string]>) => val?.map(row => [...row]) as Array<[string, string]>;
+
 function InputTable({ value, onChange }: IProps) {
     const len = value?.length || 0;
-    const focusedElemIndex = useRef<string | null>(null);
+    const focusedElemIndex = useRef<string | null>('0.0');
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        const arr = (value?.map(row => [...row]) as Array<[string, string]>) || [];
+        const newArr = copyVal(value) || [];
 
         const { name, value: newVal } = e.target;
         const [i,j] = name.split('.');
 
         if (name === `${len}.0`) {
-            arr.push([newVal, '']);
+            newArr.push([newVal, '']);
         } else if (name === `${len}.1`) {
-            arr.push(['', newVal]);
+            newArr.push(['', newVal]);
         } else {
-            arr[+i][+j] = newVal;
+            newArr[+i][+j] = newVal;
         }
 
-        onChange?.(null, { value: arr });
+        onChange?.(null, { value: newArr });
     }, [len, onChange, value]);
 
     const handleRowRemove = useCallback((e:SyntheticEvent<HTMLButtonElement>) => {
-        const arr = (value?.map(row => [...row]) as Array<[string, string]>) || [];
+        const newArr = copyVal(value) || [];
         const { index } = e.currentTarget.dataset;
         if (index) {
-            delete arr[+index];
+            delete newArr[+index];
         }
-        onChange?.(null, { value: arr });
+        onChange?.(null, { value: newArr });
     }, [value, onChange]);
 
     const handleFocus = useCallback((e: FocusEvent<HTMLInputElement>) => {
@@ -52,16 +54,41 @@ function InputTable({ value, onChange }: IProps) {
         elem?.focus();
     }, []);
 
+    const handlePaste = useCallback( (e: ClipboardEvent) => {
+        const data = e.clipboardData.getData('text');
+        const isMultiRowDate = data.indexOf('\n') !== -1;
+
+        if (!isMultiRowDate) {
+            return
+        }
+
+        e.preventDefault();
+        const newArr = copyVal(value) || [];
+
+        data.split('\n').forEach(row => {
+            const i = row.indexOf('-');
+
+
+            newArr.push(i === -1 ?
+                [row.trim(), ''] :
+                [row.slice(0,i).trim(), row.slice(i+1).trim()]
+            );
+        });
+
+        onChange?.(null, { value: newArr });
+    }, [onChange, value])
+
 
     return <div>
         {value?.map((row,i) =>
             <div key={i} className={s.row}>
                 {row.map((cell, j) =>
                     <input
-                        ref={`${i}.${j}` === focusedElemIndex.current ? handleInputRef : undefined}
-                        className={s.input}
-                        type="text"
                         key={`${i}.${j}`}
+                        type="text"
+                        className={s.input}
+                        autoComplete='off'
+                        ref={`${i}.${j}` === focusedElemIndex.current ? handleInputRef : undefined}
                         name={`${i}.${j}`}
                         value={cell}
                         placeholder={j === 0 ? wordPlaceholder : translationPlaceholder}
@@ -80,20 +107,24 @@ function InputTable({ value, onChange }: IProps) {
         )}
         <div key={len} className={s.row}>
             <input
-                className={s.input}
-                type="text"
                 key={`${len}.0`}
+                type="text"
+                className={s.input}
+                autoComplete='off'
                 name={`${len}.0`}
-                placeholder={wordPlaceholder}
+                ref={`${len}.${0}` === focusedElemIndex.current ? handleInputRef : undefined}
                 value=''
+                placeholder={wordPlaceholder}
                 onChange={handleChange}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
+                onPaste={handlePaste}
             />
             <input
-                className={s.input}
-                type="text"
                 key={`${len}.1`}
+                type="text"
+                className={s.input}
+                autoComplete='off'
                 name={`${len}.1`}
                 value=''
                 placeholder={translationPlaceholder}
