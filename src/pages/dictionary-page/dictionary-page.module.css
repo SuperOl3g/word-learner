@@ -52,12 +52,13 @@
   transform: translate(-50%, -50%);
 }
 
-.block:hover .crossButton {
-  display: block;
+.block:hover .crossButton,
+.block:focus-within .crossButton {
+  visibility: visible;
 }
 
 .crossButton {
-  display: none;
+  visibility: hidden;
   position: absolute;
   top: 0;
   right: 0;

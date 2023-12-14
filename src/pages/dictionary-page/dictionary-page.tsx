@@ -5,6 +5,7 @@ import {formatDate, pluralize} from "../../utils";
 import {IDictionary, ValueOf} from "../../types";
 import {KNOWING_CORRECT_REPEATS_THRESHOLD} from "../exercise-page/useWordsPull";
 import Checkbox from "../../components/checkbox/checkbox";
+import Clickable from "../../components/clickable/clickable";
 
 interface IProps {
     wordLists: {
@@ -18,6 +19,8 @@ interface IProps {
 }
 
 const MAX_WORD_COUNT = 10;
+
+let c = 0;
 
 const checkIfIsLearned = (word: ValueOf<IDictionary>) => (word.correctAnswersStreak || 0) >= KNOWING_CORRECT_REPEATS_THRESHOLD;
 
@@ -102,10 +105,9 @@ function DictionaryPage({
                             value={wordLists[key]}
                             onConfirm={onListUpdate}
                         >
-                            {(handleEditPopupOpen) => (<button
+                            {(handleEditPopupOpen) => (<Clickable
                                 key={key}
                                 className={s.block}
-                                tabIndex={0}
                                 onClick={handleEditPopupOpen}
                             >
                                 {isInSelectState ? <Checkbox
@@ -115,6 +117,15 @@ function DictionaryPage({
                                     onChange={handleBlockSelectionToggle}
                                 /> : null}
 
+                                <button
+                                    className={s.crossButton}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onListRemove(key);
+                                    }}
+                                >x
+                                </button>
+
                                 <div className={s.blockTitle}>
                                     {formatDate(new Date(+key))}
                                     <br/>
@@ -122,12 +133,6 @@ function DictionaryPage({
                                 </div>
 
                                 <div>
-                                    <button
-                                        className={s.crossButton}
-                                        onClick={() => onListRemove(key)}
-                                    >x
-                                    </button>
-
                                     {keys.slice(0, MAX_WORD_COUNT)
                                         .map(word => <div className={s.row}>
                                             <span
@@ -139,7 +144,7 @@ function DictionaryPage({
                                             and {keys.length - MAX_WORD_COUNT} more</div>
                                         : ''}
                                 </div>
-                            </button>)}
+                            </Clickable>)}
                         </WordListEditor>
                     );
                 })}
