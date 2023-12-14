@@ -1,4 +1,4 @@
-import React, {HTMLAttributes, ReactNode, SyntheticEvent, useCallback, useEffect, useRef} from 'react';
+import React, {HTMLAttributes, MouseEvent, ReactNode, SyntheticEvent, useCallback, useEffect, useRef} from 'react';
 import classNames from "classnames";
 import s from './clickable.module.css';
 
@@ -9,7 +9,14 @@ interface IProps {
     onKeyDown?: (e: React.KeyboardEvent<HTMLElement>) => void,
 }
 
-function Clickable({children, className, onKeyDown, onClick, ...props}: IProps & Omit<HTMLAttributes<HTMLDivElement>, 'tabIndex' | 'onClick'>) {
+function Clickable({
+    children,
+    className,
+    onKeyDown,
+    onClick,
+    onMouseDown,
+    ...props
+}: IProps & Omit<HTMLAttributes<HTMLElement>, 'tabIndex' | 'onClick'>) {
     // By some reason React way of adding handler doesn't prevent page scrolling
     const handler = (e:KeyboardEvent) => {
         if (e.code === 'Space' && e.target === elRef.current && onClick) {
@@ -44,13 +51,23 @@ function Clickable({children, className, onKeyDown, onClick, ...props}: IProps &
         onKeyDown?.(e);
     }, [onClick, onKeyDown]);
 
+    const handleMouseDown = useCallback((e: MouseEvent<HTMLElement>) => {
+        // Prevents text selection after double clicking
+        if (e.detail === 2) {
+           e.preventDefault();
+        }
+
+        onMouseDown?.(e);
+    }, [onMouseDown]);
+
     return <div
         {...props}
         ref={handleRef}
         className={classNames(s.container, className)}
         tabIndex={0}
         onClick={onClick}
-        onKeyUp={handleKeyDown}
+        onKeyDown={handleKeyDown}
+        onMouseDown={handleMouseDown}
     >
         {children}
     </div>;
