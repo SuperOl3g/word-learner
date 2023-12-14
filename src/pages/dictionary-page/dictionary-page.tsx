@@ -34,8 +34,6 @@ function DictionaryPage({
         useState<Array<string>>([]);
 
     const handleBlockSelectionToggle = useCallback((e: SyntheticEvent<{ name: string }>) => {
-        e.stopPropagation();
-
         const key = e.currentTarget.name;
         const i =  selectedList.indexOf(key);
         const newSelectedKeys = [...selectedList];
@@ -105,46 +103,47 @@ function DictionaryPage({
                             value={wordLists[key]}
                             onConfirm={onListUpdate}
                         >
-                            {(handleEditPopupOpen) => (<Clickable
-                                key={key}
-                                className={s.block}
-                                onClick={handleEditPopupOpen}
-                            >
-                                {isInSelectState ? <Checkbox
-                                    name={key}
-                                    className={s.checkbox}
-                                    checked={selectedList.indexOf(key) !== -1}
-                                    onClick={handleBlockSelectionToggle}
-                                /> : null}
+                            {(handleEditPopupOpen) => (
+                                <div key={key} className={s.blockWrapper}>
+                                    <Clickable
+                                        className={s.block}
+                                        onClick={handleEditPopupOpen}
+                                    >
+                                        <div className={s.blockTitle}>
+                                            {formatDate(new Date(+key))}
+                                            <br/>
+                                            {Math.round(knownCount / keys.length * 100)}% learned
+                                        </div>
 
-                                <button
-                                    className={s.crossButton}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onListRemove(key);
-                                    }}
-                                >x
-                                </button>
-
-                                <div className={s.blockTitle}>
-                                    {formatDate(new Date(+key))}
-                                    <br/>
-                                    {Math.round(knownCount / keys.length * 100)}% learned
-                                </div>
-
-                                <div>
-                                    {keys.slice(0, MAX_VISIBLE_WORD_COUNT)
-                                        .map(word => <div className={s.row}>
+                                        <div>
+                                            {keys.slice(0, MAX_VISIBLE_WORD_COUNT)
+                                                .map(word => <div className={s.row}>
                                             <span
                                                 className={s.learnedMark}>{checkIfIsLearned(wordLists[key][word]) ? '✔' : ''}</span>
-                                            <b>{word}</b> - {wordLists[key][word].definition}
-                                        </div>)}
-                                    {keys.length > MAX_VISIBLE_WORD_COUNT ?
-                                        <div className={s.moreBlock}><span className={s.learnedMark}/>...
-                                            and {keys.length - MAX_VISIBLE_WORD_COUNT} more</div>
-                                        : ''}
+                                                    <b>{word}</b> - {wordLists[key][word].definition}
+                                                </div>)}
+                                            {keys.length > MAX_VISIBLE_WORD_COUNT ?
+                                                <div className={s.moreBlock}><span className={s.learnedMark}/>...
+                                                    and {keys.length - MAX_VISIBLE_WORD_COUNT} more</div>
+                                                : ''}
+                                        </div>
+                                    </Clickable>
+
+                                    {isInSelectState ? <Checkbox
+                                        name={key}
+                                        className={s.checkbox}
+                                        checked={selectedList.indexOf(key) !== -1}
+                                        onClick={handleBlockSelectionToggle}
+                                    /> : null}
+
+                                    <button
+                                        className={s.crossButton}
+                                        onClick={() => onListRemove(key)}
+                                    >x
+                                    </button>
+
                                 </div>
-                            </Clickable>)}
+                            )}
                         </WordListEditor>
                     );
                 })}
