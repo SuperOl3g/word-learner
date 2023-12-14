@@ -1,4 +1,4 @@
-import React, {KeyboardEvent, ChangeEvent, useCallback, useState} from 'react';
+import React, {KeyboardEvent, ChangeEvent, useCallback, useState, SyntheticEvent} from 'react';
 import s from './dictionary-page.module.css';
 import WordListEditor from "./new-word-list-editor/word-list-editor";
 import {formatDate, pluralize} from "../../utils";
@@ -18,9 +18,7 @@ interface IProps {
     onListSelected: (dictKeys: Array<string>) => void,
 }
 
-const MAX_WORD_COUNT = 10;
-
-let c = 0;
+const MAX_VISIBLE_WORD_COUNT = 10;
 
 const checkIfIsLearned = (word: ValueOf<IDictionary>) => (word.correctAnswersStreak || 0) >= KNOWING_CORRECT_REPEATS_THRESHOLD;
 
@@ -35,8 +33,10 @@ function DictionaryPage({
     const [selectedList, setSelectedList] =
         useState<Array<string>>([]);
 
-    const handleBlockSelectionToggle = useCallback((e: ChangeEvent<{ name: string }>) => {
-        const key = e.target.name;
+    const handleBlockSelectionToggle = useCallback((e: SyntheticEvent<{ name: string }>) => {
+        e.stopPropagation();
+
+        const key = e.currentTarget.name;
         const i =  selectedList.indexOf(key);
         const newSelectedKeys = [...selectedList];
 
@@ -114,7 +114,7 @@ function DictionaryPage({
                                     name={key}
                                     className={s.checkbox}
                                     checked={selectedList.indexOf(key) !== -1}
-                                    onChange={handleBlockSelectionToggle}
+                                    onClick={handleBlockSelectionToggle}
                                 /> : null}
 
                                 <button
@@ -133,15 +133,15 @@ function DictionaryPage({
                                 </div>
 
                                 <div>
-                                    {keys.slice(0, MAX_WORD_COUNT)
+                                    {keys.slice(0, MAX_VISIBLE_WORD_COUNT)
                                         .map(word => <div className={s.row}>
                                             <span
                                                 className={s.learnedMark}>{checkIfIsLearned(wordLists[key][word]) ? '✔' : ''}</span>
                                             <b>{word}</b> - {wordLists[key][word].definition}
                                         </div>)}
-                                    {keys.length > MAX_WORD_COUNT ?
+                                    {keys.length > MAX_VISIBLE_WORD_COUNT ?
                                         <div className={s.moreBlock}><span className={s.learnedMark}/>...
-                                            and {keys.length - MAX_WORD_COUNT} more</div>
+                                            and {keys.length - MAX_VISIBLE_WORD_COUNT} more</div>
                                         : ''}
                                 </div>
                             </Clickable>)}
