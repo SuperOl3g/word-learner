@@ -1,6 +1,6 @@
 import {useCallback, useState} from "react";
 import {IDictionary} from "../../types";
-import {LS, mapObj} from "../../utils";
+import {LS} from "../../utils";
 
 const LS_WORD_LISTS_KEY = '__wordLists';
 
@@ -8,16 +8,14 @@ export const useDictionary = () => {
     const [wordLists, setWordLists] =
         useState<{ [key: string]: IDictionary }>(LS.get(LS_WORD_LISTS_KEY) || {});
 
-    const addWordList = useCallback((list: { [key: string]: string }) => {
+    const addWordList = useCallback((list: IDictionary) => {
         if (!Object.keys(list)?.length) {
             return;
         }
 
         const newLists = {
             ...wordLists,
-            [Date.now()]: mapObj(list, (val) => ({
-                definition: val
-            })),
+            [Date.now()]: list,
         };
 
         setWordLists(newLists);
@@ -30,6 +28,15 @@ export const useDictionary = () => {
 
         setWordLists(newLists)
 
+        LS.set(LS_WORD_LISTS_KEY, newLists);
+    }, [wordLists]);
+
+
+    const updateWordList = useCallback((dict: IDictionary, key: string)  => {
+        const newLists = { ...wordLists };
+
+        newLists[key] = dict;
+        setWordLists(newLists);
         LS.set(LS_WORD_LISTS_KEY, newLists);
     }, [wordLists]);
 
@@ -52,5 +59,5 @@ export const useDictionary = () => {
     }, [wordLists]);
 
 
-    return { wordLists, addWordList, removeWordList, updateWordStat};
+    return { wordLists, addWordList, removeWordList, updateWordList, updateWordStat};
 }

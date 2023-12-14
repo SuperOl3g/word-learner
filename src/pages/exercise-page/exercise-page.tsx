@@ -64,7 +64,7 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
     }, [definition, handleAnswer, inputErrorsCount]);
 
     const handleInputKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
+        if (e.code === "Enter") {
             handleInputCheckClick();
         }
     }, [handleInputCheckClick]);

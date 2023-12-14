@@ -42,7 +42,7 @@ function Popup({ children, opened, onClose }:IProps) {
     }, [onClose]);
 
     const handleKeyDown = useCallback((e:KeyboardEvent) => {
-        if (e.key === 'Escape') {
+        if (e.code === 'Escape') {
             onClose?.();
         }
     }, [onClose]);

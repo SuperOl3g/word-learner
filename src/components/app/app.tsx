@@ -8,14 +8,10 @@ import {useDictionary} from "./useDictionary";
 
 function App() {
     const { stats, updateStats } = useStats();
-    const {wordLists, addWordList, removeWordList, updateWordStat} = useDictionary();
+    const {wordLists, addWordList, removeWordList, updateWordList, updateWordStat} = useDictionary();
     const [curListKeys, setCurListsKeys] =
         useState<Array<string>>([]);
 
-
-    const handleWordListAdd = useCallback((list: { [key: string]: string }) => {
-        addWordList(list);
-    }, [addWordList]);
 
     const handleBackBtnClick = useCallback(() => {
         setCurListsKeys( []);
@@ -29,11 +25,6 @@ function App() {
         removeWordList(key)
     }, [removeWordList]);
 
-    const handleStartExercise = useCallback((listKeys: Array<string>) => {
-        setCurListsKeys(listKeys);
-    }, []);
-
-
     const handleAnswer = useCallback((listKey: string, word: string, isPositive: boolean, isLearned: boolean) => {
         updateStats(isPositive, isLearned);
         updateWordStat(listKey, word, isPositive);
@@ -45,8 +36,9 @@ function App() {
                 <DictionaryPage
                     wordLists={wordLists}
                     onListRemove={handleWordListRemove}
-                    onListAdd={handleWordListAdd}
-                    onListSelected={handleStartExercise}
+                    onListUpdate={updateWordList}
+                    onListAdd={addWordList}
+                    onListSelected={setCurListsKeys}
                 /> :
                 <ExercisePage
                     wordLists={wordLists}

@@ -1,6 +1,6 @@
-import React, {ChangeEvent, useCallback, useState} from 'react';
+import React, {KeyboardEvent, ChangeEvent, useCallback, useState} from 'react';
 import s from './dictionary-page.module.css';
-import NewWordListEditor from "./new-word-list-editor/new-word-list-editor";
+import WordListEditor from "./new-word-list-editor/word-list-editor";
 import {formatDate, pluralize} from "../../utils";
 import {IDictionary, ValueOf} from "../../types";
 import {KNOWING_CORRECT_REPEATS_THRESHOLD} from "../exercise-page/useWordsPull";
@@ -11,7 +11,8 @@ interface IProps {
         [key: string]: IDictionary
     },
 
-    onListAdd: (dict: { [key: string]: string }) => void,
+    onListAdd: (dict: IDictionary) => void,
+    onListUpdate: (dict: IDictionary, key: string) => void,
     onListRemove: (key: string) => void,
     onListSelected: (dictKeys: Array<string>) => void,
 }
@@ -23,6 +24,7 @@ const checkIfIsLearned = (word: ValueOf<IDictionary>) => (word.correctAnswersStr
 function DictionaryPage({
     wordLists,
     onListAdd,
+    onListUpdate,
     onListRemove,
     onListSelected,
 }: IProps) {
@@ -69,7 +71,7 @@ function DictionaryPage({
                         Selected {Object.keys(selectedList).length} of {Object.keys(wordLists).length} lists
                         ({wordsCount} {pluralize(wordsCount, ['word', 'words'])})
                         &nbsp;&nbsp;
-                        <button onClick={handleStartExerciseBtnClick}>
+                        <button autoFocus onClick={handleStartExerciseBtnClick}>
                             Let's roll!
                         </button>
                     </div>
@@ -83,6 +85,7 @@ function DictionaryPage({
                     </label>
                 </div> :
                 <button
+                    autoFocus
                     onClick={handleLearnBtnClick}
                 >Learn!</button>}
             </div>
@@ -94,40 +97,60 @@ function DictionaryPage({
                         (sum + ((checkIfIsLearned(wordLists[key][word]) ? 1 : 0))) ,0);
 
                     return (
-                        <div className={s.block} key={key}>
-                            {isInSelectState ? <Checkbox
-                                name={key}
-                                className={s.checkbox}
-                                checked={selectedList.indexOf(key) !== -1}
-                                onChange={handleBlockSelectionToggle}
-                            /> : null}
+                        <WordListEditor
+                            wordListKey={key}
+                            value={wordLists[key]}
+                            onConfirm={onListUpdate}
+                        >
+                            {(handleEditPopupOpen) => (<button
+                                key={key}
+                                className={s.block}
+                                tabIndex={0}
+                                onClick={handleEditPopupOpen}
+                            >
+                                {isInSelectState ? <Checkbox
+                                    name={key}
+                                    className={s.checkbox}
+                                    checked={selectedList.indexOf(key) !== -1}
+                                    onChange={handleBlockSelectionToggle}
+                                /> : null}
 
-                            <div className={s.blockTitle}>
-                                {formatDate(new Date(+key))}
-                                <br/>
-                                {Math.round(knownCount / keys.length * 100)}% learned
-                            </div>
+                                <div className={s.blockTitle}>
+                                    {formatDate(new Date(+key))}
+                                    <br/>
+                                    {Math.round(knownCount / keys.length * 100)}% learned
+                                </div>
 
-                            <div>
-                                <button
-                                    className={s.crossButton}
-                                    onClick={() => onListRemove(key)}
-                                >x
-                                </button>
+                                <div>
+                                    <button
+                                        className={s.crossButton}
+                                        onClick={() => onListRemove(key)}
+                                    >x
+                                    </button>
 
-                                {keys.slice(0, MAX_WORD_COUNT)
-                                    .map(word => <div className={s.row}>
-                                        <span className={s.learnedMark}>{checkIfIsLearned(wordLists[key][word]) ? '✔' : ''}</span>
-                                        <b>{word}</b> - {wordLists[key][word].definition}
-                                    </div>)}
-                                {keys.length > MAX_WORD_COUNT ?
-                                    <div><br/><span className={s.learnedMark} />... and {keys.length - MAX_WORD_COUNT} more</div>
-                                    : ''}
-                            </div>
-                        </div>);
+                                    {keys.slice(0, MAX_WORD_COUNT)
+                                        .map(word => <div className={s.row}>
+                                            <span
+                                                className={s.learnedMark}>{checkIfIsLearned(wordLists[key][word]) ? '✔' : ''}</span>
+                                            <b>{word}</b> - {wordLists[key][word].definition}
+                                        </div>)}
+                                    {keys.length > MAX_WORD_COUNT ?
+                                        <div className={s.moreBlock}><span className={s.learnedMark}/>...
+                                            and {keys.length - MAX_WORD_COUNT} more</div>
+                                        : ''}
+                                </div>
+                            </button>)}
+                        </WordListEditor>
+                    );
                 })}
                 <div className={s.block}>
-                    <NewWordListEditor onConfirm={onListAdd}/>
+                    <WordListEditor onConfirm={onListAdd}>
+                        {(handleAddClick) => <button
+                            className={s.addButton}
+                            onClick={handleAddClick}
+                        >+ Add
+                        </button>}
+                    </WordListEditor>
                 </div>
             </div>
         </div>

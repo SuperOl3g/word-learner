@@ -21,6 +21,8 @@
 }
 
 .block {
+  background: none;
+  color: currentColor;
   position: relative;
   text-align: left;
   border: 1px solid currentColor;
@@ -28,11 +30,17 @@
   padding: 16px;
   margin: 12px;
   width: 300px;
-  height: 350px;
+  height: 332px;
   display: flex;
   flex-direction: column;
   font-size: 12pt;
   line-height: 16pt;
+  transition: background-color .15s ease-in-out;
+}
+
+.block:hover,
+.block:focus {
+  background: rgba(255,255,255,.04);
 }
 
 .checkbox {
@@ -94,4 +102,20 @@
   display: flex;
   align-items: center;
   margin-top: 12px;
+}
+
+.moreBlock {
+  margin-top: 4px;
+}
+
+.addButton {
+  height: 100%;
+  width: 100%;
+  align-self: center;
+  justify-self: center;
+  background: none;
+  color: currentColor;
+  opacity: .64;
+  border: none;
+  font-size: 20pt;
 }

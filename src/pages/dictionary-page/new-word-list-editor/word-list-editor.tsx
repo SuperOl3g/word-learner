@@ -1,16 +1,24 @@
-import React, {ChangeEvent, Fragment, useCallback, useState} from 'react';
-import s from './new-word-list-editor.module.css';
+import React, {Fragment, useCallback, useEffect, useState} from 'react';
+import s from './word-list-editor.module.css';
 import Popup from "../../../components/popup/popup";
 import InputTable from "../../../components/input-table/input-table";
-import {CallbackHandler} from "../../../types";
+import {CallbackHandler, IDictionary} from "../../../types";
+interface IProps<T> {
+    children?: (open: () => void) => React.ReactNode,
+    value?: IDictionary,
+    wordListKey?: T,
 
-interface IProps {
-    onConfirm?: (dict:{[key: string]: string}) => void
+    onConfirm?: (dict: IDictionary, wordListKe: T) => void
 }
 
-function NewWordListEditor({ onConfirm }: IProps) {
-    const [value, setValue] = useState<Array<[string,string]>>([]);
-    const [isInEditingState, setEditingState] = useState(false);
+const dictToArr = (dict?: IDictionary) => Object.keys(dict || {}).map(k => [k, dict?.[k].definition]) as Array<[string,string]>;
+
+function WordListEditor<T extends string | undefined>({ wordListKey, value: oldValue, children, onConfirm }: IProps<T>) {
+    const [value, setValue] = useState<Array<[string,string]>>(dictToArr(oldValue));
+    const [isOpened, setEditingState] = useState(false);
+    useEffect(()=> {
+        setValue(dictToArr(oldValue));
+    }, [oldValue, isOpened]);
     const [isError, setErrorState] = useState(false);
 
     const handleChange: CallbackHandler<Array<[string,string]>> = useCallback((_,{ value }) => {
@@ -18,7 +26,7 @@ function NewWordListEditor({ onConfirm }: IProps) {
     }, []);
 
     const handleConfirmClick = useCallback(() => {
-        const wordList: { [key: string]: string } = {};
+        const wordList: IDictionary = {};
 
         const isError = value
             .find(([word, meaning], i) => {
@@ -28,13 +36,22 @@ function NewWordListEditor({ onConfirm }: IProps) {
                     return true;
                 }
 
-                wordList[trimmedWord] = meaning.trim();
+                // if it's an old word with same definition then needs to copy its as is with it's learning stat
+                if (oldValue?.[trimmedWord] && oldValue[trimmedWord].definition === meaning.trim()) {
+                    wordList[trimmedWord] = oldValue?.[trimmedWord];
+                } else {
+                    wordList[trimmedWord] = {
+                        definition: meaning.trim()
+                    };
+                }
+
+                return false;
             });
 
         if (isError) {
             setErrorState(true);
         } else {
-            onConfirm?.(wordList);
+            onConfirm?.(wordList, wordListKey as T);
 
             setEditingState(false);
             setValue([]);
@@ -52,13 +69,9 @@ function NewWordListEditor({ onConfirm }: IProps) {
 
     return (
         <Fragment>
-            <button
-                className={s.addButton}
-                onClick={handleAddClick}
-            >+ Add
-            </button>
+            {children?.(handleAddClick)}
             <Popup
-                opened={isInEditingState}
+                opened={isOpened}
                 onClose={handlePopupClose}
             >
                 <div className={s.inputContainer}>
@@ -77,4 +90,4 @@ function NewWordListEditor({ onConfirm }: IProps) {
         </Fragment>);
 }
 
-export default NewWordListEditor;
+export default WordListEditor;
