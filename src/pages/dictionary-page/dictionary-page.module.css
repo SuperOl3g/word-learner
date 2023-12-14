@@ -47,6 +47,11 @@
   background: rgba(255,255,255,.04);
 }
 
+.block_disabled {
+  opacity: .64;
+  pointer-events: none;
+}
+
 .checkbox {
   width: 24px;
   height: 24px;

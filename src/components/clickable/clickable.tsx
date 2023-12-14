@@ -1,12 +1,12 @@
-import React, {HTMLAttributes, ReactNode, useCallback, useEffect, useRef} from 'react';
+import React, {HTMLAttributes, ReactNode, SyntheticEvent, useCallback, useEffect, useRef} from 'react';
 import classNames from "classnames";
 import s from './clickable.module.css';
 
 interface IProps {
     children: ReactNode,
 
-    onClick?: () => void,
-    onKeyDown?: () => void,
+    onClick?: (e: SyntheticEvent<HTMLElement>) => void,
+    onKeyDown?: (e: React.KeyboardEvent<HTMLElement>) => void,
 }
 
 function Clickable({children, className, onKeyDown, onClick, ...props}: IProps & Omit<HTMLAttributes<HTMLDivElement>, 'tabIndex' | 'onClick'>) {
@@ -37,11 +37,11 @@ function Clickable({children, className, onKeyDown, onClick, ...props}: IProps &
         elRef.current = el;
     }, []);
 
-    const handleKeyDown = useCallback((e: React.KeyboardEvent)=> {
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLElement>)=> {
         if ((e.code === 'Enter' || e.code === 'Space') && e.target === e.currentTarget) {
-            onClick?.();
+            onClick?.(e);
         }
-        onKeyDown?.();
+        onKeyDown?.(e);
     }, [onClick, onKeyDown]);
 
     return <div

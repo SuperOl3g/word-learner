@@ -6,6 +6,7 @@ import {IDictionary, ValueOf} from "../../types";
 import {KNOWING_CORRECT_REPEATS_THRESHOLD} from "../exercise-page/useWordsPull";
 import Checkbox from "../../components/checkbox/checkbox";
 import Clickable from "../../components/clickable/clickable";
+import classNames from "classnames";
 
 interface IProps {
     wordLists: {
@@ -33,8 +34,13 @@ function DictionaryPage({
     const [selectedList, setSelectedList] =
         useState<Array<string>>([]);
 
-    const handleBlockSelectionToggle = useCallback((e: SyntheticEvent<{ name: string }>) => {
-        const key = e.currentTarget.name;
+    const handleBlockSelectionToggle = useCallback((e: SyntheticEvent<HTMLElement>) => {
+        const { key} = e.currentTarget.dataset;
+
+        if (!key) {
+            return;
+        }
+
         const i =  selectedList.indexOf(key);
         const newSelectedKeys = [...selectedList];
 
@@ -107,7 +113,8 @@ function DictionaryPage({
                                 <div key={key} className={s.blockWrapper}>
                                     <Clickable
                                         className={s.block}
-                                        onClick={handleEditPopupOpen}
+                                        data-key={key}
+                                        onClick={isInSelectState ? handleBlockSelectionToggle : handleEditPopupOpen}
                                     >
                                         <div className={s.blockTitle}>
                                             {formatDate(new Date(+key))}
@@ -130,7 +137,8 @@ function DictionaryPage({
                                     </Clickable>
 
                                     {isInSelectState ? <Checkbox
-                                        name={key}
+                                        data-key={key}
+                                        tabIndex={-1}
                                         className={s.checkbox}
                                         checked={selectedList.indexOf(key) !== -1}
                                         onClick={handleBlockSelectionToggle}
@@ -147,7 +155,10 @@ function DictionaryPage({
                         </WordListEditor>
                     );
                 })}
-                <div className={s.block}>
+                <div className={classNames({
+                    [s.block]: true,
+                    [s.block_disabled]: isInSelectState,
+                })}>
                     <WordListEditor onConfirm={onListAdd}>
                         {(handleAddClick) => <button
                             className={s.addButton}
