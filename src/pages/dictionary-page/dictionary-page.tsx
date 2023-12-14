@@ -1,4 +1,4 @@
-import React, {KeyboardEvent, ChangeEvent, useCallback, useState, SyntheticEvent} from 'react';
+import React, {useCallback, useState, SyntheticEvent} from 'react';
 import s from './dictionary-page.module.css';
 import WordListEditor from "./new-word-list-editor/word-list-editor";
 import {formatDate, pluralize} from "../../utils";
@@ -105,12 +105,13 @@ function DictionaryPage({
 
                     return (
                         <WordListEditor
+                            key={key}
                             wordListKey={key}
                             value={wordLists[key]}
                             onConfirm={onListUpdate}
                         >
                             {(handleEditPopupOpen) => (
-                                <div key={key} className={s.blockWrapper}>
+                                <div className={s.blockWrapper}>
                                     <Clickable
                                         className={s.block}
                                         data-key={key}
@@ -123,10 +124,11 @@ function DictionaryPage({
                                         </div>
 
                                         <div>
-                                            {keys.slice(0, MAX_VISIBLE_WORD_COUNT)
-                                                .map(word => <div className={s.row}>
-                                            <span
-                                                className={s.learnedMark}>{checkIfIsLearned(wordLists[key][word]) ? '✔' : ''}</span>
+                                            {keys.slice(0, MAX_VISIBLE_WORD_COUNT).map(word =>
+                                                <div className={s.row} key={word}>
+                                                    <span className={s.learnedMark}>
+                                                        {checkIfIsLearned(wordLists[key][word]) ? '✔' : ''}
+                                                    </span>
                                                     <b>{word}</b> - {wordLists[key][word].definition}
                                                 </div>)}
                                             {keys.length > MAX_VISIBLE_WORD_COUNT ?
