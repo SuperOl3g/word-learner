@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from "react";
+import React, {FocusEvent, useCallback, useRef, useState} from "react";
 import s from './stats.module.css';
 import {IStatState} from "../app/useStats";
 
@@ -7,11 +7,18 @@ interface IProps {
 }
 
 function Stats({ stats }: IProps) {
+    const contentRef= useRef<HTMLDivElement | null>(null)
     const [isOpened, setOpened] = useState(false);
 
     const handleToggleClick = useCallback(() => {
         setOpened(!isOpened);
     }, [isOpened]);
+
+    const handleBlur = useCallback((e: FocusEvent<HTMLElement>) => {
+        if (e.relatedTarget !== contentRef.current) {
+            setOpened(false);
+        }
+    }, []);
 
     const content = Object.keys(stats)
         .sort((a,b) => a < b ? 1 : -1)
@@ -24,9 +31,16 @@ function Stats({ stats }: IProps) {
         </tr>
     );
 
-    return <div className={s.container}>
+    return <div
+        className={s.container}
+        onBlur={handleBlur}
+    >
         {isOpened ?
-            <div className={s.tableContainer}>
+            <div
+                className={s.tableContainer}
+                tabIndex={-1}
+                ref={contentRef}
+            >
                 <table className={s.table}>
                     <thead>
                         <tr className={s.tableHeader}>
@@ -40,7 +54,9 @@ function Stats({ stats }: IProps) {
                 </table>
             </div>: null
         }
-        <button onClick={handleToggleClick}>Stats</button>
+        <button
+            onClick={handleToggleClick}
+        >Stats</button>
     </div>;
 }
 
