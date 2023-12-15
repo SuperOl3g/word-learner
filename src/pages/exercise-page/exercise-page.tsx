@@ -4,6 +4,7 @@ import {pluralize} from "../../utils";
 import {IDictionary} from "../../types";
 import {ExerciseTypes, KNOWING_CORRECT_REPEATS_THRESHOLD, useWordsPull} from "./useWordsPull";
 import {useSpeaker} from "./useSpeaker";
+import Tooltip from "../../components/tooltip/tooltip";
 
 interface IProps {
     wordLists: {
@@ -141,12 +142,15 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             ⬅︎
         </button>
 
-        <button
-            className={s.soundSetting}
-            onClick={toggleSoundSetting}
-        >
-            {soundSetting ? '🔈' : '🔇'}
-        </button>
+        <div className={s.soundSetting}>
+            <Tooltip content='Toggle sound'>
+                <button
+                    onClick={toggleSoundSetting}
+                >
+                    {soundSetting ? '🔈' : '🔇'}
+                </button>
+            </Tooltip>
+        </div>
 
         <div className={s.counter}>
             Words in pull: {wordsCount}

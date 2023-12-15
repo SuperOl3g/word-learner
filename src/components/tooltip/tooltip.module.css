@@ -1,0 +1,16 @@
+.container {
+    position: relative;
+}
+
+.tooltip {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    background: white;
+    color: black;
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid black;
+    margin-bottom: 8px;
+    transform: translate(-50%, 0);
+}
