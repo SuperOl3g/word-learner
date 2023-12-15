@@ -89,13 +89,14 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <br/>
             <div className={s.checkTitle}>You were right?</div>
             <div>
-                <button autoFocus onClick={() => handleAnswer(true)}>Yes</button>
+                <button className={s.actionButton} autoFocus onClick={() => handleAnswer(true)}>Yes</button>
                 &nbsp;&nbsp;
-                <button onClick={() => handleAnswer(false)}>Nope</button>
+                <button className={s.actionButton} onClick={() => handleAnswer(false)}>Nope</button>
             </div>
         </div> :
         <div className={s.checkBlock}>
             <button
+                className={s.actionButton}
                 autoFocus
                 onClick={handleCheckBtnClick}
             >Check</button>
@@ -122,7 +123,11 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <div>This means:</div>
             <div><b>{definition}</b></div>
             <br/>
-            <button autoFocus onClick={handleInputSkipClick}>Next word</button>
+            <button
+                className={s.actionButton}
+                autoFocus
+                onClick={handleInputSkipClick}
+            >Next word</button>
         </div>
     }
 

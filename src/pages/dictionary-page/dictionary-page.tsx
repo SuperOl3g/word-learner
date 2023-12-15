@@ -78,7 +78,11 @@ function DictionaryPage({
                         Selected {Object.keys(selectedList).length} of {Object.keys(wordLists).length} lists
                         ({wordsCount} {pluralize(wordsCount, ['word', 'words'])})
                         &nbsp;&nbsp;
-                        <button autoFocus onClick={handleStartExerciseBtnClick}>
+                        <button
+                            className={s.actionButton}
+                            autoFocus
+                            onClick={handleStartExerciseBtnClick}
+                        >
                             Let's roll!
                         </button>
                     </div>
@@ -92,6 +96,7 @@ function DictionaryPage({
                     </label>
                 </div> :
                 <button
+                    className={s.actionButton}
                     autoFocus
                     onClick={handleLearnBtnClick}
                 >Learn!</button>}

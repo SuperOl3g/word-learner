@@ -9,7 +9,7 @@
   justify-content: center;
   margin-bottom: 16px;
   align-items: center;
-  min-height: 56px;
+  min-height: 64px;
 }
 
 .blocksContainer {
@@ -128,4 +128,8 @@
   opacity: .64;
   border: none;
   font-size: 20pt;
+}
+
+.actionButton {
+  padding: 4px 12px;
 }
