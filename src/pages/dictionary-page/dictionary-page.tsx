@@ -157,17 +157,19 @@ function DictionaryPage({
                         </WordListEditor>
                     );
                 })}
-                <div className={classNames({
-                    [s.block]: true,
-                    [s.block_disabled]: isInSelectState,
-                })}>
-                    <WordListEditor onConfirm={onListAdd}>
-                        {(handleAddClick) => <button
-                            className={s.addButton}
-                            onClick={handleAddClick}
-                        >+ Add
-                        </button>}
-                    </WordListEditor>
+                <div className={s.blockWrapper}>
+                    <div className={classNames({
+                        [s.block]: true,
+                        [s.block_disabled]: isInSelectState,
+                    })}>
+                        <WordListEditor onConfirm={onListAdd}>
+                            {(handleAddClick) => <button
+                                className={s.addButton}
+                                onClick={handleAddClick}
+                            >+ Add
+                            </button>}
+                        </WordListEditor>
+                    </div>
                 </div>
             </div>
         </div>
