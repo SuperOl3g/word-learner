@@ -17,7 +17,7 @@ interface IProps {
     onAnswer: (list:string, word: string, isPositive: boolean, isLearned: boolean) => void,
 }
 
-const MAX_INPUT_ERR_COUNT = 5;
+const MAX_INPUT_ERR_COUNT = 4;
 
 const normalize = (str: string) => str.trim().toLowerCase();
 

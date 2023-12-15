@@ -12,8 +12,6 @@ export enum ExerciseTypes {
     translationByWord,
     wordByTranslation,
     typingByDefinition,
-    // typingBySounding,
-    // translationBySounding
 }
 
 const getNewWords = (wordsCount: number, wordLists: { [key: string]: IDictionary }, curListKeys: Array<string>, pull: Array<string>) => {
@@ -66,7 +64,7 @@ const getNewWords = (wordsCount: number, wordLists: { [key: string]: IDictionary
     return result;
 };
 
-const getExerciseFromPull = (wordLists: { [key: string]: IDictionary }, pull: Array<string>, curWord?: string) => {
+const getNewExercise = (wordLists: { [key: string]: IDictionary }, pull: Array<string>, curWord?: string) => {
     let newWord, newList;
 
     do {
@@ -91,11 +89,11 @@ const getExerciseFromPull = (wordLists: { [key: string]: IDictionary }, pull: Ar
 
 export const useWordsPull = (wordLists: { [key: string]: IDictionary }, curListKeys: Array<string>) => {
     const [wordPull, setWordPull] = useState(getNewWords(ACTIVE_WORDS_PULL_SIZE, wordLists, curListKeys, []));
-    const [{curWord, curList, exerciseType}, setNewWord] =
-        useState(getExerciseFromPull(wordLists, wordPull));
+    const [{curWord, curList, exerciseType}, setExercise] =
+        useState(getNewExercise(wordLists, wordPull));
 
-    const setNewWordFn = useCallback(() =>
-        setNewWord(getExerciseFromPull(wordLists, wordPull, curWord)),
+    const setNewWord = useCallback(() =>
+        setExercise(getNewExercise(wordLists, wordPull, curWord)),
 [curWord, wordPull, wordLists]);
 
     const updatePull = useCallback( (oldList: string, oldWord: string) => {
@@ -113,7 +111,7 @@ export const useWordsPull = (wordLists: { [key: string]: IDictionary }, curListK
             curWord,
             exerciseType,
         },
-        setNewWord: setNewWordFn,
+        setNewWord,
         updatePull,
     };
 };
