@@ -13,6 +13,11 @@ interface IProps<T> {
 
 const dictToArr = (dict?: IDictionary) => Object.keys(dict || {}).map(k => [k, dict?.[k].definition]) as Array<[string,string]>;
 
+const isEqual = (a: Array<[string,string]>, b: Array<[string,string]>) =>
+    a.length === b.length && !a.find((_, i) =>
+        a[i][0] !== b[i][0] || a[i][0] !== b[i][0]
+    );
+
 function WordListEditor<T extends string | undefined>({ wordListKey, value: oldValue, children, onConfirm }: IProps<T>) {
     const [value, setValue] = useState<Array<[string,string]>>(dictToArr(oldValue));
     const [isOpened, setEditingState] = useState(false);
@@ -57,15 +62,19 @@ function WordListEditor<T extends string | undefined>({ wordListKey, value: oldV
             setValue([]);
             setErrorState(false);
         }
-    }, [onConfirm, value]);
+    }, [oldValue, onConfirm, value, wordListKey]);
 
     const handleAddClick = useCallback(() => {
         setEditingState( true);
     }, []);
 
     const handlePopupClose = useCallback(() => {
-        setEditingState(false);
-    }, []);
+        const text = 'You have unsaved changes, do you really want to close popup?';
+
+        if (isEqual(dictToArr(oldValue), value) || confirm(text)) { // eslint-disable-line
+            setEditingState(false);
+        }
+    }, [oldValue, value]);
 
     return (
         <Fragment>
