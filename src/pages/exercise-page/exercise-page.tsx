@@ -2,7 +2,7 @@ import React, {KeyboardEvent, useCallback, useEffect, useRef, useState} from 're
 import s from './exercise-page.module.css';
 import {pluralize} from "../../utils";
 import {IDictionary} from "../../types";
-import {KNOWING_CORRECT_REPEATS_THRESHOLD, useWordsPull} from "./useWordsPull";
+import {ExerciseTypes, KNOWING_CORRECT_REPEATS_THRESHOLD, useWordsPull} from "./useWordsPull";
 import {useSpeaker} from "./useSpeaker";
 
 interface IProps {
@@ -24,20 +24,20 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
     const {soundSetting, toggleSoundSetting, play} = useSpeaker();
     const [correctCounter, setCorrectCounter] = useState(0);
     const [learnedCounter, setLearnedCounter] = useState(0);
-    const {ex: {curWord, curList, isReversedEx, isTypingEx}, setNewWord, updatePull } =
+    const {ex: {curWord, curList, exerciseType}, setNewWord, updatePull } =
         useWordsPull(wordLists, curListKeys);
     const [isInCheckState, setCheckStateFlag] = useState(false);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [inputErrorsCount, setInputErrorCount] = useState(0);
 
-    const word = isReversedEx ? wordLists[curList][curWord].definition : curWord;
-    const definition = isReversedEx ? curWord : wordLists[curList][curWord].definition;
+    const word = exerciseType === ExerciseTypes.translationByWord ? curWord : wordLists[curList][curWord].definition;
+    const definition = exerciseType === ExerciseTypes.translationByWord ? wordLists[curList][curWord].definition : curWord;
 
     useEffect(() => {
-        if (!isReversedEx) {
+        if (exerciseType === ExerciseTypes.translationByWord) {
             play(word);
         }
-    }, [isReversedEx, play, word]);
+    }, [exerciseType, play, word]);
 
     const handleCheckBtnClick = useCallback(() => {
         setCheckStateFlag(true);
@@ -102,7 +102,7 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             >Check</button>
         </div>;
 
-    if (isReversedEx && isTypingEx) {
+    if (exerciseType === ExerciseTypes.typingByDefinition) {
         checkBlock = inputErrorsCount < MAX_INPUT_ERR_COUNT ? <div className={s.checkBlock}>
             <div className={s.checkTitle}>Type the answer:</div>
 

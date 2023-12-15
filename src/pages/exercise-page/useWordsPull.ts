@@ -8,6 +8,14 @@ const KNOWN_WORD_ADDING_PROBABILITY = 0.125 ;
 
 const REVERSE_EX_PROBABILITY = 0.2;
 
+export enum ExerciseTypes {
+    translationByWord,
+    wordByTranslation,
+    typingByDefinition,
+    // typingBySounding,
+    // translationBySounding
+}
+
 const getNewWords = (wordsCount: number, wordLists: { [key: string]: IDictionary }, curListKeys: Array<string>, pull: Array<string>) => {
     const knownWords: Array<string> = [];
     const outdatedKnownWords: Array<string> = [];
@@ -58,9 +66,8 @@ const getNewWords = (wordsCount: number, wordLists: { [key: string]: IDictionary
     return result;
 };
 
-const getNewWordFromPull = (wordLists: { [key: string]: IDictionary }, pull: Array<string>, curWord?: string) => {
+const getExerciseFromPull = (wordLists: { [key: string]: IDictionary }, pull: Array<string>, curWord?: string) => {
     let newWord, newList;
-    // TODO: подумать, как обойтись без цикла
 
     do {
         const key = pull[Math.round(Math.random() * (pull.length - 1))];
@@ -74,18 +81,22 @@ const getNewWordFromPull = (wordLists: { [key: string]: IDictionary }, pull: Arr
     return {
         curList: newList,
         curWord: newWord,
-        isReversedEx: isLast || Math.random() < REVERSE_EX_PROBABILITY,
-        isTypingEx: isLast,
+        exerciseType: isLast ?
+            ExerciseTypes.typingByDefinition :
+            (Math.random() < REVERSE_EX_PROBABILITY ?
+                ExerciseTypes.wordByTranslation :
+                ExerciseTypes.translationByWord),
     };
 }
 
 export const useWordsPull = (wordLists: { [key: string]: IDictionary }, curListKeys: Array<string>) => {
     const [wordPull, setWordPull] = useState(getNewWords(ACTIVE_WORDS_PULL_SIZE, wordLists, curListKeys, []));
-    const [{curWord, curList, isReversedEx, isTypingEx}, setNewWord] =
-        useState(getNewWordFromPull(wordLists, wordPull));
+    const [{curWord, curList, exerciseType}, setNewWord] =
+        useState(getExerciseFromPull(wordLists, wordPull));
 
-    const setNewWordFn = useCallback(() => setNewWord(getNewWordFromPull(wordLists, wordPull, curWord)),
-        [curWord, wordPull, wordLists]);
+    const setNewWordFn = useCallback(() =>
+        setNewWord(getExerciseFromPull(wordLists, wordPull, curWord)),
+[curWord, wordPull, wordLists]);
 
     const updatePull = useCallback( (oldList: string, oldWord: string) => {
         const newPull = [...wordPull.filter(k => k !== `${oldList}.${oldWord}` )];
@@ -100,8 +111,7 @@ export const useWordsPull = (wordLists: { [key: string]: IDictionary }, curListK
         ex: {
             curList,
             curWord,
-            isReversedEx,
-            isTypingEx
+            exerciseType,
         },
         setNewWord: setNewWordFn,
         updatePull,
