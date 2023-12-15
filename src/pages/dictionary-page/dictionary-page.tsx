@@ -102,78 +102,82 @@ function DictionaryPage({
                 >Learn!</button>}
             </div>
 
-            <div className={s.blocksContainer}>
-                {wordListKeys.map(key => {
-                    const keys = Object.keys(wordLists[key]);
-                    const knownCount = keys.reduce((sum, word) =>
-                        (sum + ((checkIfIsLearned(wordLists[key][word]) ? 1 : 0))) ,0);
-
-                    return (
-                        <WordListEditor
-                            key={key}
-                            wordListKey={key}
-                            value={wordLists[key]}
-                            onConfirm={onListUpdate}
-                        >
-                            {(handleEditPopupOpen) => (
-                                <div className={s.blockWrapper}>
-                                    <Clickable
-                                        className={s.block}
-                                        data-key={key}
-                                        onClick={isInSelectState ? handleBlockSelectionToggle : handleEditPopupOpen}
-                                    >
-                                        <div className={s.blockTitle}>
-                                            {formatDate(new Date(+key))}
-                                            <br/>
-                                            {Math.round(knownCount / keys.length * 100)}% learned ({knownCount} of {keys.length})
-                                        </div>
-
-                                        <div>
-                                            {keys.slice(0, MAX_VISIBLE_WORD_COUNT).map(word =>
-                                                <div className={s.row} key={word}>
-                                                    <span className={s.learnedMark}>
-                                                        {checkIfIsLearned(wordLists[key][word]) ? '✔' : ''}
-                                                    </span>
-                                                    <b>{word}</b> - {wordLists[key][word].definition}
-                                                </div>)}
-                                            {keys.length > MAX_VISIBLE_WORD_COUNT ?
-                                                <div><span className={s.learnedMark}/>...</div>
-                                                : null}
-                                        </div>
-                                    </Clickable>
-
-                                    {isInSelectState ? <Checkbox
-                                        data-key={key}
-                                        tabIndex={-1}
-                                        className={s.checkbox}
-                                        checked={selectedList.indexOf(key) !== -1}
-                                        onClick={handleBlockSelectionToggle}
-                                    /> : null}
-
-                                    <button
-                                        className={s.crossButton}
-                                        onClick={() => onListRemove(key)}
-                                    >x
-                                    </button>
-
-                                </div>
-                            )}
-                        </WordListEditor>
-                    );
-                })}
-                <div className={s.blockWrapper}>
-                    <div className={classNames({
-                        [s.block]: true,
-                        [s.block_disabled]: isInSelectState,
-                    })}>
-                        <WordListEditor onConfirm={onListAdd}>
-                            {(handleAddClick) => <button
-                                className={s.addButton}
-                                onClick={handleAddClick}
-                            >+ Add
-                            </button>}
-                        </WordListEditor>
+            <div>
+                <div className={s.blocksContainer}>
+                    <div className={s.blockWrapper}>
+                        <div className={classNames({
+                            [s.block]: true,
+                            [s.block_disabled]: isInSelectState,
+                        })}>
+                            <WordListEditor onConfirm={onListAdd}>
+                                {(handleAddClick) => <button
+                                    className={s.addButton}
+                                    onClick={handleAddClick}
+                                >+ Add
+                                </button>}
+                            </WordListEditor>
+                        </div>
                     </div>
+
+                    {wordListKeys.sort((a,b) => a < b ? 1 : -1).map(key => {
+                        const keys = Object.keys(wordLists[key]);
+                        const knownCount = keys.reduce((sum, word) =>
+                            (sum + ((checkIfIsLearned(wordLists[key][word]) ? 1 : 0))), 0);
+
+                        return (
+                            <WordListEditor
+                                key={key}
+                                wordListKey={key}
+                                value={wordLists[key]}
+                                onConfirm={onListUpdate}
+                            >
+                                {(handleEditPopupOpen) => (
+                                    <div className={s.blockWrapper}>
+                                        <Clickable
+                                            className={s.block}
+                                            data-key={key}
+                                            onClick={isInSelectState ? handleBlockSelectionToggle : handleEditPopupOpen}
+                                        >
+                                            <div className={s.blockTitle}>
+                                                {formatDate(new Date(+key))}
+                                                <br/>
+                                                {Math.round(knownCount / keys.length * 100)}% learned
+                                                ({knownCount} of {keys.length})
+                                            </div>
+
+                                            <div>
+                                                {keys.slice(0, MAX_VISIBLE_WORD_COUNT).map(word =>
+                                                    <div className={s.row} key={word}>
+                                                        <span className={s.learnedMark}>
+                                                            {checkIfIsLearned(wordLists[key][word]) ? '✔' : ''}
+                                                        </span>
+                                                        <b>{word}</b> - {wordLists[key][word].definition}
+                                                    </div>)}
+                                                {keys.length > MAX_VISIBLE_WORD_COUNT ?
+                                                    <div><span className={s.learnedMark}/>...</div>
+                                                    : null}
+                                            </div>
+                                        </Clickable>
+
+                                        {isInSelectState ? <Checkbox
+                                            data-key={key}
+                                            tabIndex={-1}
+                                            className={s.checkbox}
+                                            checked={selectedList.indexOf(key) !== -1}
+                                            onClick={handleBlockSelectionToggle}
+                                        /> : null}
+
+                                        <button
+                                            className={s.crossButton}
+                                            onClick={() => onListRemove(key)}
+                                        >x
+                                        </button>
+
+                                    </div>
+                                )}
+                            </WordListEditor>
+                        );
+                    })}
                 </div>
             </div>
         </div>
