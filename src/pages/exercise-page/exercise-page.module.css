@@ -58,3 +58,7 @@
 .actionButton {
     padding: 4px 12px;
 }
+
+.confirmButton {
+    min-width: 67px;
+}

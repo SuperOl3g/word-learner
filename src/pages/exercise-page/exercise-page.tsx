@@ -5,6 +5,7 @@ import {IDictionary} from "../../types";
 import {ExerciseTypes, KNOWING_CORRECT_REPEATS_THRESHOLD, useWordsPull} from "./useWordsPull";
 import {useSpeaker} from "./useSpeaker";
 import Tooltip from "../../components/tooltip/tooltip";
+import classNames from "classnames";
 
 interface IProps {
     wordLists: {
@@ -94,9 +95,16 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <br/>
             <div className={s.checkTitle}>You were right?</div>
             <div>
-                <button className={s.actionButton} autoFocus onClick={() => handleAnswer(true)}>Yes</button>
+                <button
+                    className={classNames(s.actionButton, s.confirmButton)}
+                    autoFocus
+                    onClick={() => handleAnswer(true)}
+                >Yes</button>
                 &nbsp;&nbsp;
-                <button className={s.actionButton} onClick={() => handleAnswer(false)}>Nope</button>
+                <button
+                    className={classNames(s.actionButton, s.confirmButton)}
+                    onClick={() => handleAnswer(false)}
+                >Nope</button>
             </div>
         </div> :
         <div className={s.checkBlock}>
