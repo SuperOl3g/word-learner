@@ -1,8 +1,8 @@
-import {KeyboardEvent, FocusEvent, SyntheticEvent, useCallback, useRef} from "react";
+import {KeyboardEvent, FocusEvent, SyntheticEvent, useCallback, useRef, ReactNode} from "react";
 import s from './popup.module.css';
 
 interface IProps {
-    children?: React.ReactNode,
+    children?: ReactNode,
     opened?: boolean,
 
     onClose?: () => void,

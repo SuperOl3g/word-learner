@@ -23,7 +23,7 @@ const normalize = (str: string) => str.trim().toLowerCase();
 
 function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: IProps) {
     const [counter, setCounter] = useState(0);
-    const {soundSetting, toggleSoundSetting, play} = useSpeaker();
+    const {soundSetting, toggleSoundSetting, speak} = useSpeaker();
     const [correctCounter, setCorrectCounter] = useState(0);
     const [learnedCounter, setLearnedCounter] = useState(0);
     const {ex: {curWord, curList, exerciseType}, setNewWord, updatePull } =
@@ -37,9 +37,9 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
 
     useEffect(() => {
         if (exerciseType === ExerciseTypes.translationByWord) {
-            play(word);
+            speak(word);
         }
-    }, [exerciseType, play, word]);
+    }, [exerciseType, speak, word]);
 
     const handleCheckBtnClick = useCallback(() => {
         setCheckStateFlag(true);

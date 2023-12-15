@@ -11,7 +11,7 @@ export const useSpeaker = () => {
     const [soundSetting, setSoundSetting] =
         useState(LS.get<boolean>(LS_SOUND_SETTING_KEY) ?? true);
 
-    const play = useCallback((text: string) => {
+    const speak = useCallback((text: string) => {
         if (!soundSetting) {
             return;
         }
@@ -27,5 +27,5 @@ export const useSpeaker = () => {
         LS.set(LS_SOUND_SETTING_KEY, newVal);
     }
 
-    return { soundSetting, toggleSoundSetting, play };
+    return { soundSetting, toggleSoundSetting, speak };
 }
