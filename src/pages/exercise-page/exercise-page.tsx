@@ -78,10 +78,14 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
         }
     }, [handleInputCheckClick]);
 
-    const handleInputSkipClick = useCallback(() => {
+    const handleInputNextWordClick = useCallback(() => {
         handleAnswer(false);
         setInputErrorCount(0);
     }, [handleAnswer]);
+
+    const handleInputSkipClick = useCallback(() => {
+        setInputErrorCount(MAX_INPUT_ERR_COUNT);
+    }, []);
 
     let checkBlock = isInCheckState ?
         <div className={s.checkBlock}>
@@ -118,6 +122,8 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
                 />
                 &nbsp;
                 <button onClick={handleInputCheckClick}>Check</button>
+                &nbsp;
+                <button onClick={handleInputSkipClick}>Skip</button>
             </div>
             <div className={s.inputError}>{inputErrorsCount ? 'This is wrong, please try again' : null}</div>
         </div> : <div className={s.checkBlock}>
@@ -127,7 +133,7 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <button
                 className={s.actionButton}
                 autoFocus
-                onClick={handleInputSkipClick}
+                onClick={handleInputNextWordClick}
             >Next word</button>
         </div>
     }
