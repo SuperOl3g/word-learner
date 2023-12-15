@@ -34,7 +34,7 @@
   border-radius: 4px;
   padding: 16px;
   width: 300px;
-  height: 332px;
+  height: 330px;
   display: flex;
   flex-direction: column;
   font-size: 12pt;
@@ -112,10 +112,6 @@
   display: flex;
   align-items: center;
   margin-top: 12px;
-}
-
-.moreBlock {
-  margin-top: 4px;
 }
 
 .addButton {

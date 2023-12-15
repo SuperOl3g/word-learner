@@ -125,7 +125,7 @@ function DictionaryPage({
                                         <div className={s.blockTitle}>
                                             {formatDate(new Date(+key))}
                                             <br/>
-                                            {Math.round(knownCount / keys.length * 100)}% learned
+                                            {Math.round(knownCount / keys.length * 100)}% learned ({knownCount} of {keys.length})
                                         </div>
 
                                         <div>
@@ -137,9 +137,8 @@ function DictionaryPage({
                                                     <b>{word}</b> - {wordLists[key][word].definition}
                                                 </div>)}
                                             {keys.length > MAX_VISIBLE_WORD_COUNT ?
-                                                <div className={s.moreBlock}><span className={s.learnedMark}/>...
-                                                    and {keys.length - MAX_VISIBLE_WORD_COUNT} more</div>
-                                                : ''}
+                                                <div><span className={s.learnedMark}/>...</div>
+                                                : null}
                                         </div>
                                     </Clickable>
 
