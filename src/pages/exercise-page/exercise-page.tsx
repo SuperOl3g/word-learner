@@ -1,8 +1,9 @@
-import React, { KeyboardEvent, useCallback, useRef, useState} from 'react';
+import React, {KeyboardEvent, useCallback, useEffect, useRef, useState} from 'react';
 import s from './exercise-page.module.css';
 import {pluralize} from "../../utils";
 import {IDictionary} from "../../types";
 import {KNOWING_CORRECT_REPEATS_THRESHOLD, useWordsPull} from "./useWordsPull";
+import {useSpeaker} from "./useSpeaker";
 
 interface IProps {
     wordLists: {
@@ -20,6 +21,7 @@ const normalize = (str: string) => str.trim().toLowerCase();
 
 function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: IProps) {
     const [counter, setCounter] = useState(0);
+    const {soundSetting, toggleSoundSetting, play} = useSpeaker();
     const [correctCounter, setCorrectCounter] = useState(0);
     const [learnedCounter, setLearnedCounter] = useState(0);
     const {ex: {curWord, curList, isReversedEx, isTypingEx}, setNewWord, updatePull } =
@@ -30,6 +32,12 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
 
     const word = isReversedEx ? wordLists[curList][curWord].definition : curWord;
     const definition = isReversedEx ? curWord : wordLists[curList][curWord].definition;
+
+    useEffect(() => {
+        if (!isReversedEx) {
+            play(word);
+        }
+    }, [isReversedEx, play, word]);
 
     const handleCheckBtnClick = useCallback(() => {
         setCheckStateFlag(true);
@@ -52,7 +60,7 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
         setCheckStateFlag(false);
 
         onAnswer(curList, curWord, isCorrect, isLearned);
-    }, [counter, setNewWord, onAnswer, curList, curWord, correctCounter]);
+    }, [counter, wordLists, curList, curWord, setNewWord, onAnswer, correctCounter, learnedCounter, updatePull]);
 
     const handleInputCheckClick = useCallback(() => {
         if(normalize(inputRef.current?.value || '') === normalize(definition)) {
@@ -77,7 +85,7 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
     let checkBlock = isInCheckState ?
         <div className={s.checkBlock}>
             <div>This means:</div>
-            <div><b>{definition}</b></div>
+            <div className={s.definition}>{definition}</div>
             <br/>
             <div className={s.checkTitle}>You were right?</div>
             <div>
@@ -114,18 +122,25 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <div>This means:</div>
             <div><b>{definition}</b></div>
             <br/>
-            <button onClick={handleInputSkipClick}>Next word</button>
+            <button autoFocus onClick={handleInputSkipClick}>Next word</button>
         </div>
     }
 
     const wordsCount = curListKeys.reduce((sum, listKey) => (sum + Object.keys(wordLists[listKey]).length), 0);
 
     return <div className={s.container}>
-    <button
+        <button
             className={s.backButton}
             onClick={onBackButtonClick}
         >
             ⬅︎
+        </button>
+
+        <button
+            className={s.soundSetting}
+            onClick={toggleSoundSetting}
+        >
+            {soundSetting ? '🔈' : '🔇'}
         </button>
 
         <div className={s.counter}>
@@ -133,12 +148,13 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <br/>
             Session correctness: {counter === 0 ? '-' :
             `${Math.round(correctCounter / counter * 10000) / 100}% (${correctCounter} / ${counter})`
-            }
+        }
             <br/>
-            Learned words: {learnedCounter}
+            Words learned: {learnedCounter}
         </div>
         <div>How to translate the next {pluralize(word.split(' ').length, ['word', 'words'])}:</div>
-        <span><b>{word}</b> ?</span>
+        <div className={s.word}>{word} ?</div>
+        <br/>
         <br/>
         {checkBlock}
 

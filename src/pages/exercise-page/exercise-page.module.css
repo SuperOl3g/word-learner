@@ -21,7 +21,7 @@
 }
 
 .checkBlock {
-    min-height: 110px;
+    min-height: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,4 +35,22 @@
 .inputError {
     margin-top: 2px;
     height: 14pt;
+}
+
+.word {
+    margin-top: 8px;
+    font-size: 24pt;
+    font-weight: bold;
+}
+
+.definition {
+    margin-top: 6px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.soundSetting {
+    position: absolute;
+    bottom: 0;
+    left: 60px;
 }
