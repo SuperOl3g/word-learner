@@ -7,19 +7,20 @@
 .tableContainer {
     max-height: 300px;
     overflow: auto;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
 .table {
-    background: white;
-    color: black;
+    border-radius: 4px;
+    background: #111;
+    color: white;
     border-collapse: collapse;
 }
 
 .tableHeader {
     position: sticky;
     top: 0;
-    background: #ccc;
+    background: #6b6b6b;
     font-weight: bold;
 }
 

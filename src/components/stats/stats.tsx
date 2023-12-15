@@ -34,7 +34,7 @@ function Stats({ stats }: IProps) {
 
     return <div
         className={s.container}
-
+        onBlur={handleBlur}
     >
         {isOpened ?
             <div
