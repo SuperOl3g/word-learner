@@ -1,5 +1,6 @@
 import {ChangeEvent, ClipboardEvent, FocusEvent, SyntheticEvent, useCallback, useRef} from "react";
 import s from './input-table.module.css';
+import Input from "../input/input";
 
 interface IProps {
     value?: Array<[string,string]>,
@@ -83,11 +84,10 @@ function InputTable({ value, onChange }: IProps) {
         {value?.map((row,i) =>
             <div key={i} className={s.row}>
                 {row.map((cell, j) =>
-                    <input
+                    <Input
+                        inGroup={j ? 'last' : 'first'}
+                        inVerticalGroup={i ? 'middle' : 'first'}
                         key={`${i}.${j}`}
-                        type="text"
-                        className={s.input}
-                        autoComplete='off'
                         ref={`${i}.${j}` === focusedElemIndex.current ? handleInputRef : undefined}
                         name={`${i}.${j}`}
                         value={cell}
@@ -106,11 +106,10 @@ function InputTable({ value, onChange }: IProps) {
             </div>
         )}
         <div key={len} className={s.row}>
-            <input
+            <Input
+                inGroup='first'
+                inVerticalGroup={len ? 'last' : undefined}
                 key={`${len}.0`}
-                type="text"
-                className={s.input}
-                autoComplete='off'
                 name={`${len}.0`}
                 ref={`${len}.${0}` === focusedElemIndex.current ? handleInputRef : undefined}
                 value=''
@@ -120,11 +119,10 @@ function InputTable({ value, onChange }: IProps) {
                 onBlur={handleBlur}
                 onPaste={handlePaste}
             />
-            <input
+            <Input
+                inGroup='last'
+                inVerticalGroup={len ? 'last' : undefined}
                 key={`${len}.1`}
-                type="text"
-                className={s.input}
-                autoComplete='off'
                 name={`${len}.1`}
                 value=''
                 placeholder={translationPlaceholder}

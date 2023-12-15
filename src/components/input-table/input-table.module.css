@@ -20,8 +20,3 @@
 .row:focus-within .removeButton {
     visibility: visible;
 }
-
-.input {
-    width: 100%;
-    padding: 4px 6px;
-}

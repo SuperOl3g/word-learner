@@ -1,4 +1,4 @@
-import {ButtonHTMLAttributes, ReactNode, SyntheticEvent} from "react";
+import {ButtonHTMLAttributes, ReactNode} from "react";
 import s from './button.module.css';
 import classNames from "classnames";
 

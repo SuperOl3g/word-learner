@@ -5,8 +5,8 @@ import {IDictionary} from "../../types";
 import {ExerciseTypes, KNOWING_CORRECT_REPEATS_THRESHOLD, useWordsPull} from "./useWordsPull";
 import {useSpeaker} from "./useSpeaker";
 import Tooltip from "../../components/tooltip/tooltip";
-import classNames from "classnames";
 import Button from "../../components/button/button";
+import Input from "../../components/input/input";
 
 interface IProps {
     wordLists: {
@@ -123,13 +123,10 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
     if (exerciseType === ExerciseTypes.typingByDefinition) {
         checkBlock = inputErrorsCount < MAX_INPUT_ERR_COUNT ? <div className={s.checkBlock}>
             <div className={s.checkTitle}>Type the answer:</div>
-
-            <div>
-                <input
+            <div className={s.answerRow}>
+                <Input
                     ref={inputRef}
                     key={definition}
-                    type="text"
-                    autoComplete='off'
                     autoFocus
                     onKeyDown={handleInputKeyDown}
                 />

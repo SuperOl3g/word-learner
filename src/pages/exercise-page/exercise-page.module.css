@@ -21,7 +21,7 @@
 }
 
 .checkBlock {
-    min-height: 124px;
+    min-height: 128px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -29,11 +29,11 @@
 }
 
 .checkTitle {
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .inputError {
-    margin-top: 2px;
+    margin-top: 8px;
     height: 14pt;
 }
 
@@ -55,10 +55,10 @@
     left: 60px;
 }
 
-.actionButton {
-    padding: 4px 12px;
-}
-
 .confirmButton {
     min-width: 40px;
+}
+
+.answerRow {
+    display: flex;
 }
