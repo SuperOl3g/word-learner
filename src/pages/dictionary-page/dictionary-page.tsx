@@ -7,6 +7,7 @@ import {KNOWING_CORRECT_REPEATS_THRESHOLD} from "../exercise-page/useWordsPull";
 import Checkbox from "../../components/checkbox/checkbox";
 import Clickable from "../../components/clickable/clickable";
 import classNames from "classnames";
+import Button from "../../components/button/button";
 
 interface IProps {
     wordLists: {
@@ -78,13 +79,13 @@ function DictionaryPage({
                         Selected {Object.keys(selectedList).length} of {Object.keys(wordLists).length} lists
                         ({wordsCount} {pluralize(wordsCount, ['word', 'words'])})
                         &nbsp;&nbsp;
-                        <button
-                            className={s.actionButton}
+                        <Button
+                            size='m'
                             autoFocus
                             onClick={handleStartExerciseBtnClick}
                         >
                             Let's roll!
-                        </button>
+                        </Button>
                     </div>
                     <label className={s.selectAllBlock}>
                         <Checkbox
@@ -95,17 +96,17 @@ function DictionaryPage({
                         />Select all
                     </label>
                 </div> :
-                <button
-                    className={s.actionButton}
+                <Button
+                    size='m'
                     autoFocus
                     onClick={handleLearnBtnClick}
-                >Learn!</button>}
+                >Learn!</Button>}
             </div>
 
             <div>
                 <div className={s.blocksContainer}>
                     <div className={s.blockWrapper}>
-                        <div className={classNames({
+                    <div className={classNames({
                             [s.block]: true,
                             [s.block_disabled]: isInSelectState,
                         })}>

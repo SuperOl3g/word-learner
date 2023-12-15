@@ -1,0 +1,17 @@
+.button {
+    background: #6b6b6b;
+    color: white;
+    border-radius: 4px;
+    border: none;
+    padding: 3px 8px;
+    transition: background-color .2s ease-in-out;
+}
+
+.button:hover,
+.button:focus {
+    background: #5f5f5f;
+}
+
+.button_size_m {
+    padding: 6px 14px;
+}

@@ -3,6 +3,7 @@ import s from './word-list-editor.module.css';
 import Popup from "../../../components/popup/popup";
 import InputTable from "../../../components/input-table/input-table";
 import {CallbackHandler, IDictionary} from "../../../types";
+import Button from "../../../components/button/button";
 interface IProps<T> {
     children?: (open: () => void) => React.ReactNode,
     value?: IDictionary,
@@ -90,11 +91,12 @@ function WordListEditor<T extends string | undefined>({ wordListKey, value: oldV
                     />
                     {isError ? <div>Incorrect data</div>: null}
                 </div>
-                <button
+                <Button
+                    size='m'
                     onClick={handleConfirmClick}
                 >
                     Confirm
-                </button>
+                </Button>
             </Popup>
         </Fragment>);
 }

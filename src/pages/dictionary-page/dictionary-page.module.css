@@ -51,7 +51,7 @@
   color: currentColor;
   position: relative;
   text-align: left;
-  border: 1px solid currentColor;
+  border: 1px solid #575757;
   border-radius: 4px;
   padding: 16px;
   width: var(--word-list-width);
@@ -98,6 +98,8 @@
   border: none;
   width: 20px;
   height: 20px;
+  background: #6b6b6b;
+  color: white;
 }
 
 .blockTitle {
@@ -145,8 +147,4 @@
   opacity: .64;
   border: none;
   font-size: 20pt;
-}
-
-.actionButton {
-  padding: 4px 12px;
 }

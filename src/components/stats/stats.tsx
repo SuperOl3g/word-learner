@@ -1,6 +1,7 @@
 import React, {FocusEvent, useCallback, useRef, useState} from "react";
 import s from './stats.module.css';
 import {IStatState} from "../app/useStats";
+import Button from "../button/button";
 
 interface IProps {
     stats: IStatState
@@ -33,7 +34,7 @@ function Stats({ stats }: IProps) {
 
     return <div
         className={s.container}
-        onBlur={handleBlur}
+
     >
         {isOpened ?
             <div
@@ -43,20 +44,21 @@ function Stats({ stats }: IProps) {
             >
                 <table className={s.table}>
                     <thead>
-                        <tr className={s.tableHeader}>
-                            <td>Date</td>
-                            <td>Correct</td>
-                            <td>Total</td>
-                            <td>Learned</td>
-                        </tr>
+                    <tr className={s.tableHeader}>
+                        <td>Date</td>
+                        <td>Correct</td>
+                        <td>Total</td>
+                        <td>Learned</td>
+                    </tr>
                     </thead>
                     {content.length ? content : <div className={s.placeholder}>No data</div>}
                 </table>
-            </div>: null
+            </div> : null
         }
-        <button
+        <Button
             onClick={handleToggleClick}
-        >Stats</button>
+        >Stats
+        </Button>
     </div>;
 }
 

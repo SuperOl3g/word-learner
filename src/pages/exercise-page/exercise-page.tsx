@@ -6,6 +6,7 @@ import {ExerciseTypes, KNOWING_CORRECT_REPEATS_THRESHOLD, useWordsPull} from "./
 import {useSpeaker} from "./useSpeaker";
 import Tooltip from "../../components/tooltip/tooltip";
 import classNames from "classnames";
+import Button from "../../components/button/button";
 
 interface IProps {
     wordLists: {
@@ -95,24 +96,28 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             <br/>
             <div className={s.checkTitle}>You were right?</div>
             <div>
-                <button
-                    className={classNames(s.actionButton, s.confirmButton)}
+                <Button
+                    size='m'
                     autoFocus
                     onClick={() => handleAnswer(true)}
-                >Yes</button>
+                >
+                    <div className={s.confirmButton}>Yes</div>
+                </Button>
                 &nbsp;&nbsp;
-                <button
-                    className={classNames(s.actionButton, s.confirmButton)}
+                <Button
+                    size='m'
                     onClick={() => handleAnswer(false)}
-                >Nope</button>
+                >
+                    <div className={s.confirmButton}>Nope</div>
+                </Button>
             </div>
         </div> :
         <div className={s.checkBlock}>
-            <button
-                className={s.actionButton}
+            <Button
+                size='m'
                 autoFocus
                 onClick={handleCheckBtnClick}
-            >Check</button>
+            >Check</Button>
         </div>;
 
     if (exerciseType === ExerciseTypes.typingByDefinition) {
@@ -129,40 +134,41 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
                     onKeyDown={handleInputKeyDown}
                 />
                 &nbsp;
-                <button onClick={handleInputCheckClick}>Check</button>
+                <Button onClick={handleInputCheckClick}>Check</Button>
                 &nbsp;
-                <button onClick={handleInputSkipClick}>Skip</button>
+                <Button onClick={handleInputSkipClick}>Skip</Button>
             </div>
             <div className={s.inputError}>{inputErrorsCount ? 'This is wrong, please try again' : null}</div>
         </div> : <div className={s.checkBlock}>
             <div>This means:</div>
             <div><b>{definition}</b></div>
             <br/>
-            <button
-                className={s.actionButton}
+            <Button
+                size='m'
                 autoFocus
                 onClick={handleInputNextWordClick}
-            >Next word</button>
+            >Next word</Button>
         </div>
     }
 
     const wordsCount = curListKeys.reduce((sum, listKey) => (sum + Object.keys(wordLists[listKey]).length), 0);
 
     return <div className={s.container}>
-        <button
-            className={s.backButton}
-            onClick={onBackButtonClick}
-        >
-            ⬅︎
-        </button>
+        <div className={s.backButton}>
+            <Button
+                onClick={onBackButtonClick}
+            >
+                ⬅︎
+            </Button>
+        </div>
 
         <div className={s.soundSetting}>
             <Tooltip content='Toggle sound'>
-                <button
+                <Button
                     onClick={toggleSoundSetting}
                 >
                     {soundSetting ? '🔈' : '🔇'}
-                </button>
+                </Button>
             </Tooltip>
         </div>
 
