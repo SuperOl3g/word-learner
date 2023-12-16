@@ -2,16 +2,16 @@ import {forwardRef, InputHTMLAttributes} from "react";
 import s from './input.module.css';
 import classNames from "classnames";
 
-type IProps = Omit<InputHTMLAttributes<Element>, 'type' | 'className'> & {
+export type IInputProps = Omit<InputHTMLAttributes<Element>, 'type' | 'className'> & {
     inGroup?: 'first' | 'middle' | 'last',
     inVerticalGroup?: 'first' | 'middle' | 'last',
 };
 
-const Input = forwardRef<HTMLInputElement, IProps>(({
+const Input = forwardRef<HTMLInputElement, IInputProps>(({
     inGroup,
     inVerticalGroup,
     ...props
-}: IProps, ref) =>  {
+}: IInputProps, ref) =>  {
     return <input
         {...props}
         ref={ref}

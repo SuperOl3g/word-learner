@@ -92,7 +92,7 @@ export const useWordsPull = (wordLists: { [key: string]: IDictionary }, curListK
     const [{curWord, curList, exerciseType}, setExercise] =
         useState(getNewExercise(wordLists, wordPull));
 
-    const setNewWord = useCallback(() =>
+    const updateExercise = useCallback(() =>
         setExercise(getNewExercise(wordLists, wordPull, curWord)),
 [curWord, wordPull, wordLists]);
 
@@ -111,7 +111,7 @@ export const useWordsPull = (wordLists: { [key: string]: IDictionary }, curListK
             curWord,
             exerciseType,
         },
-        setNewWord,
+        updateExercise,
         updatePull,
     };
 };

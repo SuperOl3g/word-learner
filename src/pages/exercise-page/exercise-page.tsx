@@ -1,4 +1,4 @@
-import React, {KeyboardEvent, useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import s from './exercise-page.module.css';
 import {pluralize} from "../../utils";
 import {IDictionary} from "../../types";
@@ -6,7 +6,7 @@ import {ExerciseTypes, KNOWING_CORRECT_REPEATS_THRESHOLD, useWordsPull} from "./
 import {useSpeaker} from "./useSpeaker";
 import Tooltip from "../../components/tooltip/tooltip";
 import Button from "../../components/button/button";
-import Input from "../../components/input/input";
+import ExerciseInput from "./exercise-input/exercise-input";
 
 interface IProps {
     wordLists: {
@@ -20,17 +20,15 @@ interface IProps {
 
 const MAX_INPUT_ERR_COUNT = 4;
 
-const normalize = (str: string) => str.trim().toLowerCase();
-
 function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: IProps) {
     const [counter, setCounter] = useState(0);
-    const {soundSetting, toggleSoundSetting, speak} = useSpeaker();
     const [correctCounter, setCorrectCounter] = useState(0);
     const [learnedCounter, setLearnedCounter] = useState(0);
-    const {ex: {curWord, curList, exerciseType}, setNewWord, updatePull } =
+
+    const {soundSetting, toggleSoundSetting, speak} = useSpeaker();
+    const {ex: {curWord, curList, exerciseType}, updateExercise, updatePull } =
         useWordsPull(wordLists, curListKeys);
     const [isInCheckState, setCheckStateFlag] = useState(false);
-    const inputRef = useRef<HTMLInputElement | null>(null);
     const [inputErrorsCount, setInputErrorCount] = useState(0);
 
     const word = exerciseType === ExerciseTypes.translationByWord ? curWord : wordLists[curList][curWord].definition;
@@ -59,35 +57,29 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
             updatePull(curList, curWord);
         }
 
-        setNewWord();
+        updateExercise();
         setCheckStateFlag(false);
 
         onAnswer(curList, curWord, isCorrect, isLearned);
-    }, [counter, wordLists, curList, curWord, setNewWord, onAnswer, correctCounter, learnedCounter, updatePull]);
+    }, [counter, wordLists, curList, curWord, updateExercise, onAnswer, correctCounter, learnedCounter, updatePull]);
 
-    const handleInputCheckClick = useCallback(() => {
-        if(normalize(inputRef.current?.value || '') === normalize(definition)) {
+    const handleInputCheck = useCallback((isCorrect: boolean) => {
+        if(isCorrect) {
             handleAnswer(true);
             setInputErrorCount(0);
         } else {
             setInputErrorCount(inputErrorsCount + 1);
         }
-    }, [definition, handleAnswer, inputErrorsCount]);
-
-    const handleInputKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.code === "Enter") {
-            handleInputCheckClick();
-        }
-    }, [handleInputCheckClick]);
+    }, [handleAnswer, inputErrorsCount]);
 
     const handleInputNextWordClick = useCallback(() => {
         handleAnswer(false);
         setInputErrorCount(0);
     }, [handleAnswer]);
 
-    const handleInputSkipClick = useCallback(() => {
-        setInputErrorCount(MAX_INPUT_ERR_COUNT);
-    }, []);
+    const handleInputSkip = useCallback(() =>
+        setInputErrorCount(MAX_INPUT_ERR_COUNT)
+    , []);
 
     let checkBlock = isInCheckState ?
         <div className={s.checkBlock}>
@@ -123,19 +115,13 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
     if (exerciseType === ExerciseTypes.typingByDefinition) {
         checkBlock = inputErrorsCount < MAX_INPUT_ERR_COUNT ? <div className={s.checkBlock}>
             <div className={s.checkTitle}>Type the answer:</div>
-            <div className={s.answerRow}>
-                <Input
-                    ref={inputRef}
-                    key={definition}
-                    autoFocus
-                    onKeyDown={handleInputKeyDown}
-                />
-                &nbsp;
-                <Button onClick={handleInputCheckClick}>Check</Button>
-                &nbsp;
-                <Button onClick={handleInputSkipClick}>Skip</Button>
-            </div>
-            <div className={s.inputError}>{inputErrorsCount ? 'This is wrong, please try again' : null}</div>
+            <ExerciseInput
+                key={definition}
+                autoFocus
+                checkVal={definition}
+                onConfirm={handleInputCheck}
+                onSkip={handleInputSkip}
+            />
         </div> : <div className={s.checkBlock}>
             <div>This means:</div>
             <div><b>{definition}</b></div>

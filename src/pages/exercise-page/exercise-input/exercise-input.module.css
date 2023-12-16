@@ -1,0 +1,27 @@
+.block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.container {
+    position: relative;
+    display: flex;
+}
+
+.tip {
+    position: absolute;
+    top: 6px;
+    left: 9px;
+    pointer-events: none;
+    opacity: .64;
+}
+
+.inputError {
+    margin-top: 8px;
+    height: 14pt;
+}
+
+.wrongLetter {
+    color: red;
+}

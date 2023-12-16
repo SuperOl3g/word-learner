@@ -32,11 +32,6 @@
     margin-bottom: 12px;
 }
 
-.inputError {
-    margin-top: 8px;
-    height: 14pt;
-}
-
 .word {
     margin-top: 8px;
     font-size: 24pt;
@@ -57,8 +52,4 @@
 
 .confirmButton {
     min-width: 40px;
-}
-
-.answerRow {
-    display: flex;
 }
