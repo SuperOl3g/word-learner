@@ -30,4 +30,12 @@
     margin-left: 8px;
     font-size: 20px;
     font-weight: bold;
+    opacity: 0.75;
+    padding-bottom: 4px;
+    transition: opacity .15s ease-in-out;
+}
+
+.closeButton:hover,
+.closeButton:focus {
+    opacity: 1;
 }
