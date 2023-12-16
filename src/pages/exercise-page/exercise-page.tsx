@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import s from './exercise-page.module.css';
 import {pluralize} from "../../utils";
 import {IDictionary} from "../../types";
@@ -134,7 +134,29 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
         </div>
     }
 
-    const wordsCount = curListKeys.reduce((sum, listKey) => (sum + Object.keys(wordLists[listKey]).length), 0);
+    const wordsCount = useRef<{total: number, newWords: number} | null>(null);
+
+    useMemo(() => {
+        let total = 0;
+        let newWords = 0;
+
+        curListKeys.forEach(listKey => {
+            const words = Object.keys(wordLists[listKey]);
+            total += words.length;
+
+            words.forEach(word => {
+                if ((wordLists[listKey][word]?.correctAnswersStreak || 0) < KNOWING_CORRECT_REPEATS_THRESHOLD) {
+                    newWords++;
+                }
+            })
+        });
+
+        wordsCount.current = {
+            total,
+            newWords,
+        };
+    }, [counter]);
+
 
     return <div className={s.container}>
         <div className={s.backButton}>
@@ -156,7 +178,7 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
         </div>
 
         <div className={s.counter}>
-            Words in pull: {wordsCount}
+            Words in pull: {wordsCount.current?.total} ({wordsCount.current?.newWords} new)
             <br/>
             Session correctness: {counter === 0 ? '-' :
             `${Math.round(correctCounter / counter * 10000) / 100}% (${correctCounter} / ${counter})`
