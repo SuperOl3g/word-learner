@@ -1,4 +1,4 @@
-import React, {forwardRef, KeyboardEvent, useCallback, useRef, useState} from "react";
+import React, {KeyboardEvent, useCallback, useRef, useState} from "react";
 import Input from "../../../components/input/input";
 import s from './exercise-input.module.css';
 import Button from "../../../components/button/button";

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import s from './exercise-page.module.css';
 import {pluralize} from "../../utils";
 import {IDictionary} from "../../types";

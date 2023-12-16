@@ -1,7 +1,10 @@
+body {
+  background-color: #282c34;
+}
+
 .app {
   padding: 24px 20px;
   min-height: 100vh;
-  background-color: #282c34;
   color: white;
   position: relative;
   display: flex;

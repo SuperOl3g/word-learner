@@ -5,10 +5,11 @@ import React, {
     useCallback,
     useRef,
     ReactNode,
-    useEffect,
-    useMemo
+    useMemo,
+    useEffect
 } from "react";
 import s from './popup.module.css';
+import {blockBodyScroll, restoreBodyScroll} from "./bodyScroll";
 
 interface IProps {
     children?: ReactNode,
@@ -25,13 +26,24 @@ const arePropsEqual = (oldProps: IProps, nextProps: IProps) => !nextProps.opened
 const Popup = React.memo(({ children, opened, onClose }:IProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const prevFocusedElem = useRef<HTMLElement | null>(null);
-    
+
     useMemo(() => {
         if (opened) {
             prevFocusedElem.current = document.activeElement as HTMLElement;
+
+            blockBodyScroll();
         } else {
             prevFocusedElem.current?.focus();
             prevFocusedElem.current = null;
+
+            restoreBodyScroll();
+        }
+    }, [opened]);
+
+    // Needs to restore scroll if the component unmounted in opened state
+    useEffect(() => () => {
+        if (opened) {
+            restoreBodyScroll();
         }
     }, [opened]);
 
