@@ -4,7 +4,7 @@ import {IDictionary} from "../../types";
 const ACTIVE_WORDS_PULL_SIZE = 25;
 export const KNOWING_CORRECT_REPEATS_THRESHOLD = 5;
 const KNOWING_DURATION = 30 * 24 * 60 * 60;
-const KNOWN_WORD_ADDING_PROBABILITY = 0.125 ;
+const KNOWN_WORD_ADDING_PROBABILITY = 0.1 ;
 
 const REVERSE_EX_PROBABILITY = 0.2;
 
@@ -50,7 +50,10 @@ const getNewWords = (wordsCount: number, wordLists: { [key: string]: IDictionary
 
     while (result.length < Math.min(wordsCount, sumLen)) {
         let arr;
-        if (Math.random() < KNOWN_WORD_ADDING_PROBABILITY && (outdatedKnownWords.length || knownWords.length)) {
+        if (Math.random() < KNOWN_WORD_ADDING_PROBABILITY
+            && (outdatedKnownWords.length || knownWords.length)
+            || (!startedWords.length && !notStartedWords.length)
+        ) {
             arr = outdatedKnownWords.length ? outdatedKnownWords : knownWords;
         } else {
             arr = startedWords.length ? startedWords : notStartedWords;

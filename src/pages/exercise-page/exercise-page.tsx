@@ -116,7 +116,7 @@ function ExercisePage({ wordLists, curListKeys, onBackButtonClick, onAnswer }: I
         checkBlock = inputErrorsCount < MAX_INPUT_ERR_COUNT ? <div className={s.checkBlock}>
             <div className={s.checkTitle}>Type the answer:</div>
             <ExerciseInput
-                key={definition}
+                key={definition + wordLists[curList][curWord].correctAnswersStreak}
                 autoFocus
                 checkVal={definition}
                 onConfirm={handleInputCheck}

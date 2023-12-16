@@ -36,9 +36,13 @@ function InputTable({ value, onChange }: IProps) {
     const handleRowRemove = useCallback((e:SyntheticEvent<HTMLButtonElement>) => {
         const newArr = copyVal(value) || [];
         const { index } = e.currentTarget.dataset;
-        if (index) {
-            delete newArr[+index];
+
+        if (!index) {
+            return;
         }
+
+        newArr.splice(+index, 1);
+
         onChange?.(null, { value: newArr });
     }, [value, onChange]);
 
