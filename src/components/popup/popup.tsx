@@ -1,4 +1,4 @@
-import {KeyboardEvent, FocusEvent, SyntheticEvent, useCallback, useRef, ReactNode} from "react";
+import React, {KeyboardEvent, FocusEvent, SyntheticEvent, useCallback, useRef, ReactNode} from "react";
 import s from './popup.module.css';
 
 interface IProps {
@@ -11,7 +11,9 @@ interface IProps {
 const getInnerFocusableElems = (container: HTMLElement) =>
     container.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
 
-function Popup({ children, opened, onClose }:IProps) {
+const arePropsEqual = (oldProps: IProps, nextProps: IProps) => (!nextProps.opened && oldProps.opened === nextProps.opened);
+
+const Popup = React.memo(({ children, opened, onClose }:IProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     const handleFocusOnBeforeElement = useCallback((event: FocusEvent<HTMLDivElement>) => {
@@ -78,6 +80,6 @@ function Popup({ children, opened, onClose }:IProps) {
             onFocus={handleFocusOnAfterElement}
         />
     </div> : null;
-}
+}, arePropsEqual);
 
 export default Popup
