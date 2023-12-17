@@ -1,5 +1,5 @@
 import {useCallback, useState} from "react";
-import {LS} from "../../utils";
+import {LocalStorage} from "./localStorage";
 
 const toSpeak = new SpeechSynthesisUtterance();
 
@@ -9,7 +9,7 @@ toSpeak.rate = 1.1;
 
 export const useSpeaker = () => {
     const [soundSetting, setSoundSetting] =
-        useState(LS.get<boolean>(LS_SOUND_SETTING_KEY) ?? true);
+        useState(LocalStorage.get<boolean>(LS_SOUND_SETTING_KEY) ?? true);
 
     const speak = useCallback((text: string) => {
         if (!soundSetting) {
@@ -20,12 +20,12 @@ export const useSpeaker = () => {
         window.speechSynthesis.speak( toSpeak );
     }, [soundSetting]);
 
-    const toggleSoundSetting = () => {
+    const toggleSoundSetting = useCallback(() => {
         const newVal = !soundSetting
 
         setSoundSetting(newVal);
-        LS.set(LS_SOUND_SETTING_KEY, newVal);
-    }
+        LocalStorage.set(LS_SOUND_SETTING_KEY, newVal);
+    }, []);
 
     return { soundSetting, toggleSoundSetting, speak };
 }

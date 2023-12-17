@@ -1,9 +1,9 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import s from './exercise-page.module.css';
-import {pluralize} from "../../utils";
+import {pluralize} from "../../utils/utils";
 import {IDictionary} from "../../types";
 import {ExerciseTypes, KNOWING_CORRECT_REPEATS_THRESHOLD, useWordsPull} from "./useWordsPull";
-import {useSpeaker} from "./useSpeaker";
+import {useSpeaker} from "../../utils/useSpeaker";
 import Tooltip from "../../components/tooltip/tooltip";
 import Button from "../../components/button/button";
 import ExerciseInput from "./exercise-input/exercise-input";

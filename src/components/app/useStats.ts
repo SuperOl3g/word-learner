@@ -1,5 +1,5 @@
 import {useCallback, useState} from "react";
-import {LS} from "../../utils";
+import {LocalStorage} from "../../utils/localStorage";
 
 const LS_STAT_KEY = '__ex_stats';
 
@@ -14,7 +14,7 @@ export interface IStatState {
 
 export const useStats = () => {
     const [stats, setStats] =
-        useState<IStatState>(LS.get<IStatState>(LS_STAT_KEY) || {});
+        useState<IStatState>(LocalStorage.get<IStatState>(LS_STAT_KEY) || {});
 
     const updateStats = useCallback((isPositive: boolean, isLearned: boolean) => {
         const key = new Date(new Date().toDateString()).valueOf();
@@ -28,7 +28,7 @@ export const useStats = () => {
         };
 
         setStats(newStats);
-        LS.set(LS_STAT_KEY, newStats);
+        LocalStorage.set(LS_STAT_KEY, newStats);
     }, [stats]);
 
 

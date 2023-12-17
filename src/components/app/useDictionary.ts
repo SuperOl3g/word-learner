@@ -1,12 +1,12 @@
 import {useCallback, useState} from "react";
 import {IDictionary} from "../../types";
-import {LS} from "../../utils";
+import {LocalStorage} from "../../utils/localStorage";
 
 const LS_WORD_LISTS_KEY = '__wordLists';
 
 export const useDictionary = () => {
     const [wordLists, setWordLists] =
-        useState<{ [key: string]: IDictionary }>(LS.get(LS_WORD_LISTS_KEY) || {});
+        useState<{ [key: string]: IDictionary }>(LocalStorage.get(LS_WORD_LISTS_KEY) || {});
 
     const addWordList = useCallback((list: IDictionary) => {
         if (!Object.keys(list)?.length) {
@@ -19,7 +19,7 @@ export const useDictionary = () => {
         };
 
         setWordLists(newLists);
-        LS.set(LS_WORD_LISTS_KEY, newLists);
+        LocalStorage.set(LS_WORD_LISTS_KEY, newLists);
     }, [wordLists]);
 
     const removeWordList = useCallback((listKey: string)  => {
@@ -28,7 +28,7 @@ export const useDictionary = () => {
 
         setWordLists(newLists)
 
-        LS.set(LS_WORD_LISTS_KEY, newLists);
+        LocalStorage.set(LS_WORD_LISTS_KEY, newLists);
     }, [wordLists]);
 
 
@@ -37,7 +37,7 @@ export const useDictionary = () => {
 
         newLists[key] = dict;
         setWordLists(newLists);
-        LS.set(LS_WORD_LISTS_KEY, newLists);
+        LocalStorage.set(LS_WORD_LISTS_KEY, newLists);
     }, [wordLists]);
 
     const updateWordStat = useCallback((listKey: string, word: string, isPositive: boolean) => {
@@ -55,7 +55,7 @@ export const useDictionary = () => {
 
         setWordLists(newLists)
 
-        LS.set(LS_WORD_LISTS_KEY, newLists);
+        LocalStorage.set(LS_WORD_LISTS_KEY, newLists);
     }, [wordLists]);
 
 

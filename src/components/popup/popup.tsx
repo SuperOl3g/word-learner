@@ -9,7 +9,7 @@ import React, {
     useEffect
 } from "react";
 import s from './popup.module.css';
-import {blockBodyScroll, restoreBodyScroll} from "./bodyScroll";
+import {blockBodyScroll, restoreBodyScroll} from "../../utils/bodyScroll";
 
 interface IProps {
     children?: ReactNode,

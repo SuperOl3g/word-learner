@@ -1,3 +1,7 @@
+export type ValueOf<T> = T[keyof T];
+
+export type CallbackHandler<T> = (_: any, obj: { value?: T  }) => void;
+
 export interface IDictionary {
     [key: string]: {
         definition: string,
@@ -5,7 +9,3 @@ export interface IDictionary {
         lastAsked?: number,
     }
 }
-
-export type ValueOf<T> = T[keyof T];
-
-export type CallbackHandler<T> = (_: any, obj: { value?: T  }) => void;

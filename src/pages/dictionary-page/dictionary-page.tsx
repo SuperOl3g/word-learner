@@ -1,7 +1,7 @@
 import React, {useCallback, useState, SyntheticEvent} from 'react';
 import s from './dictionary-page.module.css';
 import WordListEditor from "./new-word-list-editor/word-list-editor";
-import {formatDate, pluralize} from "../../utils";
+import {formatDate, pluralize} from "../../utils/utils";
 import {IDictionary, ValueOf} from "../../types";
 import {KNOWING_CORRECT_REPEATS_THRESHOLD} from "../exercise-page/useWordsPull";
 import Checkbox from "../../components/checkbox/checkbox";
