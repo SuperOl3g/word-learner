@@ -5,13 +5,14 @@ import ExercisePage from "../../pages/exercise-page/exercise-page";
 import Stats from "../stats/stats";
 import {useStats} from "./useStats";
 import {useDictionary} from "./useDictionary";
+import Loader from "../loader/loader";
 
 function App() {
     const { stats, updateStats } = useStats();
-    const {wordLists, addWordList, removeWordList, updateWordList, updateWordStat} = useDictionary();
+    const {isWordListLoading, wordLists, addWordList, removeWordList, updateWordList, updateWordStat}
+        = useDictionary();
     const [curListKeys, setCurListsKeys] =
         useState<Array<string>>([]);
-
 
     const handleBackBtnClick = useCallback(() => {
         setCurListsKeys( []);
@@ -31,23 +32,25 @@ function App() {
     }, [updateStats, updateWordStat]);
 
     return (
-        <div className={s.app}>
-            {!curListKeys.length ?
-                <DictionaryPage
-                    wordLists={wordLists}
-                    onListRemove={handleWordListRemove}
-                    onListUpdate={updateWordList}
-                    onListAdd={addWordList}
-                    onListSelected={setCurListsKeys}
-                /> :
-                <ExercisePage
-                    wordLists={wordLists}
-                    curListKeys={curListKeys}
-                    onBackButtonClick={handleBackBtnClick}
-                    onAnswer={handleAnswer}
-                />}
-            <Stats stats={stats} />
-        </div>
+        isWordListLoading ?
+            <Loader overlay size='xl' /> :
+            <div className={s.app}>
+                {!curListKeys.length ?
+                    <DictionaryPage
+                        wordLists={wordLists}
+                        onListRemove={handleWordListRemove}
+                        onListUpdate={updateWordList}
+                        onListAdd={addWordList}
+                        onListSelected={setCurListsKeys}
+                    /> :
+                    <ExercisePage
+                        wordLists={wordLists}
+                        curListKeys={curListKeys}
+                        onBackButtonClick={handleBackBtnClick}
+                        onAnswer={handleAnswer}
+                    />}
+                <Stats stats={stats} />
+            </div>
     );
 }
 

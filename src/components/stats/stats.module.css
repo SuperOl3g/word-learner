@@ -24,10 +24,7 @@
     font-weight: bold;
 }
 
-.table td {
-    padding: 4px 8px;
-}
-
+.table td,
 .placeholder {
-    padding: 2px 4px;
+    padding: 4px 8px;
 }

@@ -1,7 +1,7 @@
-import {useCallback, useState} from "react";
-import {LocalStorage} from "../../utils/localStorage";
+import {useCallback, useEffect, useState} from "react";
+import {FileStorage} from "../../utils/flieStorage";
 
-const LS_STAT_KEY = '__ex_stats';
+const STAT_STORAGE_KEY = '__ex_stats';
 
 export interface IStatState {
     [date: string]: {
@@ -13,8 +13,28 @@ export interface IStatState {
 
 
 export const useStats = () => {
+    const [isLoading, setLoading] = useState(true);
     const [stats, setStats] =
-        useState<IStatState>(LocalStorage.get<IStatState>(LS_STAT_KEY) || {});
+        useState<IStatState>({});
+
+    useEffect(() => {
+        (async() => {
+            let isError = false;
+            if (!FileStorage.isInited()) {
+                isError = await FileStorage.init();
+            }
+            if (!isError) {
+                const data = FileStorage.get<IStatState>(STAT_STORAGE_KEY);
+
+                if (!data) {
+                    return;
+                }
+
+                setStats(data);
+                setLoading(false);
+            }
+        })();
+    }, []);
 
     const updateStats = useCallback((isPositive: boolean, isLearned: boolean) => {
         const key = new Date(new Date().toDateString()).valueOf();
@@ -28,9 +48,9 @@ export const useStats = () => {
         };
 
         setStats(newStats);
-        LocalStorage.set(LS_STAT_KEY, newStats);
+        FileStorage.set(STAT_STORAGE_KEY, newStats);
     }, [stats]);
 
 
-    return { stats, updateStats };
+    return { isStatLoading: isLoading, stats, updateStats };
 }

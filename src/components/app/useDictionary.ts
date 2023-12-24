@@ -1,12 +1,32 @@
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {IDictionary} from "../../types";
-import {LocalStorage} from "../../utils/localStorage";
+import {FileStorage} from "../../utils/flieStorage";
 
-const LS_WORD_LISTS_KEY = '__wordLists';
+const WORD_LISTS_STORAGE_KEY = '__wordLists';
 
 export const useDictionary = () => {
+    const [isLoading, setLoading] = useState(true);
     const [wordLists, setWordLists] =
-        useState<{ [key: string]: IDictionary }>(LocalStorage.get(LS_WORD_LISTS_KEY) || {});
+        useState<{ [key: string]: IDictionary }>({});
+
+    useEffect(() => {
+        (async() => {
+            let isError = false;
+            if (!FileStorage.isInited()) {
+                isError = await FileStorage.init();
+            }
+            if (!isError) {
+                const list = FileStorage.get<{ [key: string]: IDictionary }>(WORD_LISTS_STORAGE_KEY);
+
+                if (!list) {
+                    return;
+                }
+
+                setWordLists(list);
+                setLoading(false);
+            }
+        })();
+    }, []);
 
     const addWordList = useCallback((list: IDictionary) => {
         if (!Object.keys(list)?.length) {
@@ -19,7 +39,7 @@ export const useDictionary = () => {
         };
 
         setWordLists(newLists);
-        LocalStorage.set(LS_WORD_LISTS_KEY, newLists);
+        FileStorage.set(WORD_LISTS_STORAGE_KEY, newLists);
     }, [wordLists]);
 
     const removeWordList = useCallback((listKey: string)  => {
@@ -28,7 +48,7 @@ export const useDictionary = () => {
 
         setWordLists(newLists)
 
-        LocalStorage.set(LS_WORD_LISTS_KEY, newLists);
+        FileStorage.set(WORD_LISTS_STORAGE_KEY, newLists);
     }, [wordLists]);
 
 
@@ -37,7 +57,7 @@ export const useDictionary = () => {
 
         newLists[key] = dict;
         setWordLists(newLists);
-        LocalStorage.set(LS_WORD_LISTS_KEY, newLists);
+        FileStorage.set(WORD_LISTS_STORAGE_KEY, newLists);
     }, [wordLists]);
 
     const updateWordStat = useCallback((listKey: string, word: string, isPositive: boolean) => {
@@ -55,9 +75,16 @@ export const useDictionary = () => {
 
         setWordLists(newLists)
 
-        LocalStorage.set(LS_WORD_LISTS_KEY, newLists);
+        FileStorage.set(WORD_LISTS_STORAGE_KEY, newLists);
     }, [wordLists]);
 
 
-    return { wordLists, addWordList, removeWordList, updateWordList, updateWordStat};
+    return {
+        wordLists,
+        isWordListLoading: isLoading,
+        addWordList,
+        removeWordList,
+        updateWordList,
+        updateWordStat
+    };
 }

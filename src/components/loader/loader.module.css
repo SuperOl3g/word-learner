@@ -1,0 +1,58 @@
+@keyframes animate-rotate {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(360deg); }
+    100% { transform: rotate(1080deg); }
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /*background-color: color(var(--color-white) a(80%));*/
+}
+
+/* когда родительский блок мал данные стили подстраивают размер лоадера под него */
+.svgWrapper,
+.svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.svgWrapper {
+    display: inline-block;
+    flex-shrink: 0;
+    vertical-align: bottom;
+    width: 24px;
+    height: 24px;
+}
+
+.circle {
+    stroke-width: 8px;
+}
+
+.svgWrapper_size_xl {
+    width: 56px;
+    height: 56px;
+}
+
+.svgWrapper_size_xl .circle {
+    stroke-width: 5px;
+}
+
+.svg {
+    display: inline-block;
+    animation: animate-rotate 3s linear infinite;
+}
+
+.circle {
+    stroke-dashoffset: 100%;
+    stroke-dasharray: 306;
+    stroke-miterlimit: 10;
+}
